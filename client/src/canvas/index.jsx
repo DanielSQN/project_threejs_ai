@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { Center, OrbitControls } from '@react-three/drei';
+import { Center, PresentationControls } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
 
 import state from '../store';
@@ -23,22 +23,29 @@ const CanvasModel = () => {
       <directionalLight position={[-5, 5, -5]} intensity={0.6} />
 
       <CameraRig>
+        {/* Shadow stays outside the rotatable group so it never moves */}
         <Backdrop />
-        <Center>
-          <Shirt />
-        </Center>
-      </CameraRig>
 
-      {!snap.intro && (
-        <OrbitControls
-          makeDefault
-          enablePan={false}
-          minDistance={1.2}
-          maxDistance={3.5}
-          minPolarAngle={Math.PI / 6}
-          maxPolarAngle={(Math.PI * 5) / 6}
-        />
-      )}
+        {snap.intro ? (
+          <Center>
+            <Shirt />
+          </Center>
+        ) : (
+          // Turntable: the shirt rotates on itself, camera and shadow stay put
+          <PresentationControls
+            global
+            snap={false}
+            rotation={[0, 0, 0]}
+            polar={[-Math.PI / 6, Math.PI / 6]}
+            azimuth={[-Infinity, Infinity]}
+            config={{ mass: 1, tension: 300, friction: 30 }}
+          >
+            <Center>
+              <Shirt />
+            </Center>
+          </PresentationControls>
+        )}
+      </CameraRig>
     </Canvas>
   )
 }
