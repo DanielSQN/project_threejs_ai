@@ -79,8 +79,7 @@ canvas {
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "title canvas"
-      "text  canvas"
-      "blank carousel";
+      "text  canvas";
     align-items: center;
     column-gap: 2.5rem;
     text-align: left;
@@ -89,8 +88,7 @@ canvas {
   }
   .hero-title { grid-area: title; align-self: end; }
   .hero-text { grid-area: text; align-self: start; align-items: flex-start; @apply text-left mt-6; }
-  .hero-canvasbox { grid-area: canvas; height: 78vh; }
-  .hero-carousel { grid-area: carousel; }
+  .hero-canvasbox { grid-area: canvas; height: 82vh; }
 }
 
 /* ===== Navbar ===== */
@@ -146,11 +144,11 @@ canvas {
 
 /* ===== Hero text ===== */
 .hero-subtitle {
-  @apply text-xl lg:text-2xl font-bold text-black;
+  @apply text-sm lg:text-base font-bold text-black;
 }
 
 .hero-desc {
-  @apply max-w-md font-normal text-gray-600 text-base leading-relaxed;
+  @apply max-w-sm font-normal text-gray-500 text-xs lg:text-sm leading-relaxed;
 }
 
 .hero-cta {

@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, useAnimationControls } from 'framer-motion';
 
 import state from '../store';
 import Canvas from '../canvas';
@@ -32,7 +33,28 @@ const features = [
   { icon: <CrossIcon />, label: 'PERSONALIZACIÓN\nEN TIEMPO REAL' },
 ];
 
+// Auto-rotating designs (color variants of the brand shirt)
+const DESIGNS = ['#D8CFBE', '#2B3A55', '#6E7B6B', '#1c1c1c'];
+
 const Home = () => {
+  const controls = useAnimationControls();
+  const [, setIdx] = useState(0);
+
+  useEffect(() => {
+    state.color = DESIGNS[0];
+    const id = setInterval(async () => {
+      await controls.start({ x: '-55%', opacity: 0, transition: { duration: 0.35, ease: 'easeIn' } });
+      setIdx((prev) => {
+        const next = (prev + 1) % DESIGNS.length;
+        state.color = DESIGNS[next];
+        return next;
+      });
+      controls.set({ x: '55%' });
+      await controls.start({ x: '0%', opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } });
+    }, 4000);
+    return () => clearInterval(id);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <section className="home">
       <Navbar />
@@ -47,19 +69,6 @@ const Home = () => {
           <h1 className="head-text">VISTE <br /> TU FE.</h1>
         </motion.div>
 
-        <div className="hero-canvasbox">
-          <Canvas />
-        </div>
-
-        <div className="hero-carousel">
-          <button className="dots-arrow" aria-label="Anterior">‹</button>
-          <span className="dot" />
-          <span className="dot active" />
-          <span className="dot" />
-          <span className="dot" />
-          <button className="dots-arrow" aria-label="Siguiente">›</button>
-        </div>
-
         <motion.div className="hero-text" {...headContentAnimation}>
           <p className="hero-subtitle">Diseños que hablan de lo que crees.</p>
           <p className="hero-desc">
@@ -73,6 +82,10 @@ const Home = () => {
               Ver diseños <span aria-hidden>→</span>
             </button>
           </div>
+        </motion.div>
+
+        <motion.div className="hero-canvasbox" animate={controls}>
+          <Canvas />
         </motion.div>
       </div>
 
