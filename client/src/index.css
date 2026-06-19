@@ -15,8 +15,28 @@ html {
   }
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 .app {
-  @apply relative w-full h-screen overflow-hidden;
+  @apply relative w-full overflow-hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Let touch gestures drive the 3D controls instead of scrolling/zooming the page */
+canvas {
+  touch-action: none;
+  outline: none;
 }
 
 .home {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Canvas } from '@react-three/fiber'
 import { Center, PresentationControls } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
@@ -6,9 +7,11 @@ import state from '../store';
 import Shirt from './Shirt';
 import Backdrop from './Backdrop';
 import CameraRig from './CameraRig';
+import CameraZoom from './CameraZoom';
 
 const CanvasModel = () => {
   const snap = useSnapshot(state);
+  const [pinching, setPinching] = useState(false);
 
   return (
     <Canvas
@@ -33,12 +36,13 @@ const CanvasModel = () => {
         ) : (
           // Turntable: the shirt rotates on itself, camera and shadow stay put
           <PresentationControls
+            enabled={!pinching}
             global
             snap={false}
             rotation={[0, 0, 0]}
             polar={[-Math.PI / 6, Math.PI / 6]}
             azimuth={[-Infinity, Infinity]}
-            config={{ mass: 1, tension: 300, friction: 30 }}
+            config={{ mass: 1, tension: 500, friction: 26 }}
           >
             <Center>
               <Shirt />
@@ -46,6 +50,10 @@ const CanvasModel = () => {
           </PresentationControls>
         )}
       </CameraRig>
+
+      {!snap.intro && (
+        <CameraZoom enabled={!snap.intro} onPinchChange={setPinching} />
+      )}
     </Canvas>
   )
 }
