@@ -25,6 +25,7 @@ body,
 body {
   overflow: hidden;
   overscroll-behavior: none;
+  background: #f6f4ef;
 }
 
 .app {
@@ -40,15 +41,78 @@ canvas {
 }
 
 .home {
-  @apply w-fit xl:h-full flex xl:justify-between justify-start items-start flex-col xl:py-8 xl:px-36 sm:p-8 p-6 max-xl:gap-7 absolute z-10;
+  @apply w-fit xl:h-full flex justify-start items-start flex-col xl:px-20 sm:px-10 px-6 pt-24 xl:pt-28 absolute z-10;
 }
 
 .home-content {
-  @apply flex-1 xl:justify-center justify-start flex flex-col gap-10;
+  @apply flex-1 xl:justify-center justify-start flex flex-col gap-8 max-w-xl;
 }
 
 .head-text {
-  @apply xl:text-[10rem] text-[6rem] xl:leading-[11rem] leading-[7rem] font-black text-black;
+  @apply xl:text-[8.5rem] text-[5rem] xl:leading-[8.5rem] leading-[5rem] font-black tracking-tight text-black;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  @apply w-full flex items-center justify-between xl:px-20 sm:px-10 px-6 py-5;
+}
+
+.nav-logo {
+  @apply flex flex-col leading-[0.95] font-black tracking-tight text-black text-sm uppercase;
+}
+
+.nav-links {
+  @apply hidden lg:flex items-center gap-9 text-sm font-medium text-gray-600;
+}
+
+.nav-links li {
+  @apply cursor-pointer hover:text-black transition-colors;
+}
+
+.nav-icons {
+  @apply flex items-center gap-3 text-black;
+}
+
+.nav-icon-btn {
+  @apply relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors;
+}
+
+.cart-badge {
+  @apply absolute -top-0.5 -right-0.5 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
+}
+
+/* ===== Hero ===== */
+.hero-eyebrow {
+  @apply text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-4;
+}
+
+.hero-desc {
+  @apply max-w-md font-normal text-gray-600 text-base leading-relaxed;
+}
+
+.hero-cta {
+  @apply flex flex-wrap items-center gap-3;
+}
+
+.btn-dark {
+  @apply px-7 py-3.5 rounded-full bg-black text-white text-sm font-semibold hover:bg-gray-800 transition-colors;
+}
+
+.btn-ghost {
+  @apply px-7 py-3.5 rounded-full border border-gray-300 text-black text-sm font-semibold hover:border-black transition-colors flex items-center gap-2;
+}
+
+/* ===== Hero pagination dots ===== */
+.hero-dots {
+  @apply absolute bottom-6 left-0 w-full flex justify-center items-center gap-2 z-10;
+}
+
+.hero-dots .dot {
+  @apply w-2 h-2 rounded-full bg-gray-300 transition-all;
+}
+
+.hero-dots .dot.active {
+  @apply bg-black w-6;
 }
 
 .download-btn {
