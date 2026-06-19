@@ -1,14 +1,9 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useSnapshot } from 'valtio';
+import { motion } from 'framer-motion';
 
 import state from '../store';
+import Canvas from '../canvas';
 import Navbar from '../components/Navbar';
-import {
-  headContainerAnimation,
-  headContentAnimation,
-  headTextAnimation,
-  slideAnimation
-} from '../config/motion';
+import { headContentAnimation, headTextAnimation } from '../config/motion';
 
 const UserIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,62 +12,79 @@ const UserIcon = () => (
   </svg>
 );
 
+const CubeIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+    <path d="m3.3 7 8.7 5 8.7-5" />
+    <path d="M12 22V12" />
+  </svg>
+);
+
+const CrossIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2h-4v6H4v4h6v10h4V12h6V8h-6z" />
+  </svg>
+);
+
+const features = [
+  { icon: <CubeIcon />, label: 'VISTA 3D\nINTERACTIVA' },
+  { icon: <CrossIcon />, label: 'DISEÑOS\nCRISTIANOS' },
+  { icon: <CrossIcon />, label: 'PERSONALIZACIÓN\nEN TIEMPO REAL' },
+];
+
 const Home = () => {
-  const snap = useSnapshot(state);
-
   return (
-    <AnimatePresence>
-      {snap.intro && (
-        <>
-          <motion.div {...slideAnimation('down')} className="absolute top-0 left-0 w-full z-20">
-            <Navbar />
-          </motion.div>
+    <section className="home">
+      <Navbar />
 
-          <motion.section className="home" {...slideAnimation('left')}>
-            <div className="gender-pills lg:hidden">
-              <button className="pill pill-dark"><UserIcon /> Hombre</button>
-              <button className="pill pill-outline"><UserIcon /> Mujer</button>
-            </div>
+      <div className="hero">
+        <div className="gender-pills lg:hidden">
+          <button className="pill pill-dark"><UserIcon /> Hombre</button>
+          <button className="pill pill-outline"><UserIcon /> Mujer</button>
+        </div>
 
-            <motion.div className="home-content" {...headContainerAnimation}>
-              <motion.div {...headTextAnimation}>
-                <h1 className="head-text">
-                  VISTE <br /> TU FE.
-                </h1>
-                <p className="hero-subtitle">Diseños que hablan de lo que crees.</p>
-              </motion.div>
+        <motion.div className="hero-title" {...headTextAnimation}>
+          <h1 className="head-text">VISTE <br /> TU FE.</h1>
+        </motion.div>
 
-              <motion.div
-                {...headContentAnimation}
-                className="flex flex-col gap-6 items-center lg:items-start"
-              >
-                <p className="hero-desc">
-                  Personaliza colores, estampados y vestuario en tiempo real con nuestra herramienta 3D.
-                </p>
+        <div className="hero-canvasbox">
+          <Canvas />
+        </div>
 
-                <div className="hero-cta">
-                  <button className="btn-dark" onClick={() => (state.intro = false)}>
-                    Personalizar ahora
-                  </button>
-                  <button className="btn-ghost" type="button">
-                    Ver diseños
-                    <span aria-hidden>→</span>
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          </motion.section>
+        <div className="hero-carousel">
+          <button className="dots-arrow" aria-label="Anterior">‹</button>
+          <span className="dot" />
+          <span className="dot active" />
+          <span className="dot" />
+          <span className="dot" />
+          <button className="dots-arrow" aria-label="Siguiente">›</button>
+        </div>
 
-          <motion.div {...slideAnimation('up')} className="hero-dots">
-            <button className="dots-arrow" aria-label="Anterior">‹</button>
-            <span className="dot active" />
-            <span className="dot" />
-            <span className="dot" />
-            <button className="dots-arrow" aria-label="Siguiente">›</button>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+        <motion.div className="hero-text" {...headContentAnimation}>
+          <p className="hero-subtitle">Diseños que hablan de lo que crees.</p>
+          <p className="hero-desc">
+            Personaliza colores, estampados y versículos en tiempo real.
+          </p>
+          <div className="hero-cta">
+            <button className="btn-beige" onClick={() => (state.intro = false)}>
+              Personalizar ahora <span aria-hidden>→</span>
+            </button>
+            <button className="btn-ghost lg:inline-flex hidden" type="button">
+              Ver diseños <span aria-hidden>→</span>
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="features">
+        {features.map((f) => (
+          <div className="feature" key={f.label}>
+            <span className="feature-icon">{f.icon}</span>
+            <span className="feature-label">{f.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }
 
