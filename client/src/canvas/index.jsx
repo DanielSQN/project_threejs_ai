@@ -22,6 +22,22 @@ const ViewGroup = ({ children }) => {
   return <group ref={ref}>{children}</group>;
 };
 
+// On the home the shirt stays in place but gets a gentle "breeze": a soft sway
+// plus a subtle scale breathing, and a small scale-in on mount.
+const BreezeGroup = ({ children }) => {
+  const ref = useRef();
+  const life = useRef(0);
+  useFrame((st, delta) => {
+    life.current = Math.min(1, life.current + delta / 0.8);
+    const t = st.clock.elapsedTime;
+    ref.current.rotation.z = Math.sin(t * 0.8) * 0.035;
+    ref.current.rotation.y = Math.sin(t * 0.5) * 0.06;
+    const breathe = 1 + Math.sin(t * 1.2) * 0.01;
+    ref.current.scale.setScalar((0.92 + 0.08 * life.current) * breathe);
+  });
+  return <group ref={ref}>{children}</group>;
+};
+
 const CanvasModel = () => {
   const snap = useSnapshot(state);
   const [pinching, setPinching] = useState(false);
@@ -29,7 +45,7 @@ const CanvasModel = () => {
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 0, 0], fov: 25 }}
+      camera={{ position: [0, 0, 2.4], fov: 25 }}
       gl={{ preserveDrawingBuffer: true }}
       className="w-full max-w-full h-full transition-all ease-in"
     >
@@ -43,9 +59,11 @@ const CanvasModel = () => {
         <Backdrop />
 
         {snap.intro ? (
-          <Center>
-            <Shirt />
-          </Center>
+          <BreezeGroup>
+            <Center>
+              <Shirt />
+            </Center>
+          </BreezeGroup>
         ) : (
           // Turntable: the shirt rotates on itself, camera and shadow stay put
           <PresentationControls
