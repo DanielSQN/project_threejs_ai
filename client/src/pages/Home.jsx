@@ -40,12 +40,13 @@ const Home = () => {
   const touchX = useRef(null);
   const designs = CATALOG[gender];
 
-  // apply the current design to the shared 3D state
+  // apply the current design to the shared 3D state + trigger a wind gust
   useEffect(() => {
     const d = CATALOG[gender][idx];
     state.color = d.color;
     state.logoDecal = d.logo;
     state.isLogoTexture = true;
+    state.breezeTick += 1;
   }, [gender, idx]);
 
   // auto-advance every ~4.5s
@@ -70,15 +71,15 @@ const Home = () => {
       <Navbar />
 
       <div className="hero">
-        <div className="gender-pills">
+        <div className="gender-seg">
           <button
-            className={`pill ${gender === 'hombre' ? 'pill-dark' : 'pill-outline'}`}
+            className={`seg ${gender === 'hombre' ? 'active' : ''}`}
             onClick={() => selectGender('hombre')}
           >
             <UserIcon /> Hombre
           </button>
           <button
-            className={`pill ${gender === 'mujer' ? 'pill-dark' : 'pill-outline'}`}
+            className={`seg ${gender === 'mujer' ? 'active' : ''}`}
             onClick={() => selectGender('mujer')}
           >
             <UserIcon /> Mujer
@@ -86,7 +87,7 @@ const Home = () => {
         </div>
 
         <motion.h1 className="head-text" {...headTextAnimation}>
-          VISTE <br /> TU FE.
+          VISTE TU FE.
         </motion.h1>
         <motion.p className="hero-subtitle" {...headContentAnimation}>
           Diseños que hablan de lo que crees.

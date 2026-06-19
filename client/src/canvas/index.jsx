@@ -22,18 +22,40 @@ const ViewGroup = ({ children }) => {
   return <group ref={ref}>{children}</group>;
 };
 
-// On the home the shirt stays in place but gets a gentle "breeze": a soft sway
-// plus a subtle scale breathing, and a small scale-in on mount.
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+
+// On the home the camera stays fixed and centered; this group gives the shirt:
+//  - an entrance from small + slightly offset to full + centered (ease-out),
+//  - a continuous gentle breeze (soft sway + scale breathing),
+//  - a quick wind "gust" each time the design changes (state.breezeTick).
+// The shirt never leaves its spot and never gets cropped.
 const BreezeGroup = ({ children }) => {
   const ref = useRef();
   const life = useRef(0);
+  const gust = useRef(0);
+  const prevTick = useRef(state.breezeTick);
   useFrame((st, delta) => {
-    life.current = Math.min(1, life.current + delta / 0.8);
+    life.current = Math.min(1, life.current + delta / 1.1);
+    const e = easeOut(life.current);
+
+    if (state.breezeTick !== prevTick.current) {
+      prevTick.current = state.breezeTick;
+      gust.current = 1;
+    }
+    gust.current = Math.max(0, gust.current - delta * 1.3);
     const t = st.clock.elapsedTime;
-    ref.current.rotation.z = Math.sin(t * 0.8) * 0.035;
-    ref.current.rotation.y = Math.sin(t * 0.5) * 0.06;
-    const breathe = 1 + Math.sin(t * 1.2) * 0.01;
-    ref.current.scale.setScalar((0.92 + 0.08 * life.current) * breathe);
+    const g = gust.current;
+
+    // entrance: small + offset -> full + centered
+    ref.current.position.x = (1 - e) * 0.22;
+    ref.current.position.y = (1 - e) * 0.18;
+    const entranceScale = 0.6 + 0.4 * e;
+    const breathe = 1 + Math.sin(t * 1.2) * 0.008 + g * 0.02;
+    ref.current.scale.setScalar(entranceScale * breathe);
+
+    // breeze + gust
+    ref.current.rotation.z = Math.sin(t * 0.8) * 0.03 + Math.sin(t * 7) * 0.05 * g;
+    ref.current.rotation.y = Math.sin(t * 0.5) * 0.05 + Math.sin(t * 5) * 0.09 * g;
   });
   return <group ref={ref}>{children}</group>;
 };
