@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { motion, useAnimationControls } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
 import state from '../store';
 import Canvas from '../canvas';
@@ -13,89 +13,115 @@ const UserIcon = () => (
   </svg>
 );
 
-const CubeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-    <path d="m3.3 7 8.7 5 8.7-5" />
-    <path d="M12 22V12" />
+const Chevron = ({ dir }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    {dir === 'left' ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
   </svg>
 );
 
-const CrossIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2h-4v6H4v4h6v10h4V12h6V8h-6z" />
-  </svg>
-);
-
-const features = [
-  { icon: <CubeIcon />, label: 'VISTA 3D\nINTERACTIVA' },
-  { icon: <CrossIcon />, label: 'DISEÑOS\nCRISTIANOS' },
-  { icon: <CrossIcon />, label: 'PERSONALIZACIÓN\nEN TIEMPO REAL' },
-];
-
-// Auto-rotating designs (color variants of the brand shirt)
-const DESIGNS = ['#D8CFBE', '#2B3A55', '#6E7B6B', '#1c1c1c'];
+// Each design keeps the same base shirt but changes color + front print + verse.
+const CATALOG = {
+  hombre: [
+    { color: '#D8CFBE', logo: './brand-logo.png', name: 'La Visión' },
+    { color: '#2B3A55', logo: './threejs.png', name: 'Fe Inquebrantable' },
+    { color: '#1c1c1c', logo: './react.png', name: 'Provisión' },
+    { color: '#6E7B6B', logo: './brand-logo.png', name: 'Esperanza' },
+  ],
+  mujer: [
+    { color: '#F3F1EA', logo: './brand-logo.png', name: 'Gracia' },
+    { color: '#A98B6A', logo: './threejs.png', name: 'Luz del Mundo' },
+    { color: '#B7B7B2', logo: './react.png', name: 'Fe' },
+  ],
+};
 
 const Home = () => {
-  const controls = useAnimationControls();
-  const [, setIdx] = useState(0);
+  const [gender, setGender] = useState('hombre');
+  const [idx, setIdx] = useState(0);
+  const touchX = useRef(null);
+  const designs = CATALOG[gender];
 
+  // apply the current design to the shared 3D state
   useEffect(() => {
-    state.color = DESIGNS[0];
-    const id = setInterval(async () => {
-      await controls.start({ x: '-55%', opacity: 0, transition: { duration: 0.35, ease: 'easeIn' } });
-      setIdx((prev) => {
-        const next = (prev + 1) % DESIGNS.length;
-        state.color = DESIGNS[next];
-        return next;
-      });
-      controls.set({ x: '55%' });
-      await controls.start({ x: '0%', opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } });
-    }, 4000);
+    const d = CATALOG[gender][idx];
+    state.color = d.color;
+    state.logoDecal = d.logo;
+    state.isLogoTexture = true;
+  }, [gender, idx]);
+
+  // auto-advance every ~4.5s
+  useEffect(() => {
+    const id = setInterval(() => setIdx((p) => (p + 1) % designs.length), 4500);
     return () => clearInterval(id);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [gender, designs.length]);
+
+  const go = (dir) => setIdx((p) => (p + dir + designs.length) % designs.length);
+  const selectGender = (g) => { setGender(g); setIdx(0); };
+
+  const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
 
   return (
     <section className="home">
       <Navbar />
 
       <div className="hero">
-        <div className="gender-pills lg:hidden">
-          <button className="pill pill-dark"><UserIcon /> Hombre</button>
-          <button className="pill pill-outline"><UserIcon /> Mujer</button>
+        <div className="gender-pills">
+          <button
+            className={`pill ${gender === 'hombre' ? 'pill-dark' : 'pill-outline'}`}
+            onClick={() => selectGender('hombre')}
+          >
+            <UserIcon /> Hombre
+          </button>
+          <button
+            className={`pill ${gender === 'mujer' ? 'pill-dark' : 'pill-outline'}`}
+            onClick={() => selectGender('mujer')}
+          >
+            <UserIcon /> Mujer
+          </button>
         </div>
 
-        <motion.div className="hero-title" {...headTextAnimation}>
-          <h1 className="head-text">VISTE <br /> TU FE.</h1>
-        </motion.div>
+        <motion.h1 className="head-text" {...headTextAnimation}>
+          VISTE <br /> TU FE.
+        </motion.h1>
+        <motion.p className="hero-subtitle" {...headContentAnimation}>
+          Diseños que hablan de lo que crees.
+        </motion.p>
 
-        <motion.div className="hero-text" {...headContentAnimation}>
-          <p className="hero-subtitle">Diseños que hablan de lo que crees.</p>
-          <p className="hero-desc">
-            Personaliza colores, estampados y versículos en tiempo real.
-          </p>
-          <div className="hero-cta">
-            <button className="btn-beige" onClick={() => (state.intro = false)}>
-              Personalizar ahora <span aria-hidden>→</span>
-            </button>
-            <button className="btn-ghost lg:inline-flex hidden" type="button">
-              Ver diseños <span aria-hidden>→</span>
-            </button>
+        <div className="hero-stage">
+          <button className="hero-arrow left" onClick={() => go(-1)} aria-label="Anterior"><Chevron dir="left" /></button>
+          <div
+            className="hero-canvasbox"
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <Canvas />
           </div>
-        </motion.div>
+          <button className="hero-arrow right" onClick={() => go(1)} aria-label="Siguiente"><Chevron dir="right" /></button>
+        </div>
 
-        <motion.div className="hero-canvasbox" animate={controls}>
-          <Canvas />
-        </motion.div>
-      </div>
+        <div className="hero-dots">
+          {designs.map((_, i) => (
+            <button
+              key={i}
+              className={`dot ${i === idx ? 'active' : ''}`}
+              onClick={() => setIdx(i)}
+              aria-label={`Diseño ${i + 1}`}
+            />
+          ))}
+        </div>
 
-      <div className="features">
-        {features.map((f) => (
-          <div className="feature" key={f.label}>
-            <span className="feature-icon">{f.icon}</span>
-            <span className="feature-label">{f.label}</span>
-          </div>
-        ))}
+        <p className="hero-desc">
+          Personaliza colores, estampados y versículos en tiempo real.
+        </p>
+
+        <button className="btn-beige" onClick={() => (state.intro = false)}>
+          Personalizar ahora <span aria-hidden>→</span>
+        </button>
       </div>
     </section>
   )

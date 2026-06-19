@@ -55,40 +55,39 @@ canvas {
   @apply absolute inset-0 z-10 flex flex-col overflow-hidden;
 }
 
-/* ===== Hero layout ===== */
+/* ===== Hero layout (product hero, single centered column) ===== */
 .hero {
-  @apply flex flex-col items-center text-center px-6 pb-1 flex-1 min-h-0;
+  @apply flex flex-col items-center text-center w-full flex-1 min-h-0 px-6 pb-3;
 }
 
 .head-text {
-  @apply xl:text-[8.5rem] lg:text-[7rem] text-[3.75rem] xl:leading-[8.5rem] lg:leading-[7rem] leading-[3.75rem] font-black tracking-tight text-black;
+  @apply xl:text-[7rem] lg:text-[6rem] text-[3.75rem] xl:leading-[6.5rem] lg:leading-[5.5rem] leading-[3.75rem] font-black tracking-tight text-black mt-1;
 }
 
-/* The shirt box grows to fill the leftover space so the page never scrolls */
+/* Stage holds the shirt + side arrows; grows to fill the leftover space so
+   the full shirt always fits with margin (the breeze never crops it) */
+.hero-stage {
+  @apply relative flex items-center justify-center w-full flex-1 min-h-0 my-1 lg:max-w-2xl lg:mx-auto;
+}
+
 .hero-canvasbox {
-  @apply w-full flex-1 min-h-0;
+  @apply w-full h-full;
 }
 
-.hero-text {
-  @apply flex flex-col items-center gap-2 mt-1;
+.hero-arrow {
+  @apply absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white text-black shadow-md border border-black/5 hover:bg-gray-50 active:scale-95 transition;
 }
+.hero-arrow.left { left: 0.25rem; }
+.hero-arrow.right { right: 0.25rem; }
 
-@media (min-width: 1024px) {
-  .hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "title canvas"
-      "text  canvas";
-    align-items: center;
-    column-gap: 2.5rem;
-    text-align: left;
-    @apply xl:px-20 px-10 pb-0;
-    min-height: 0;
-  }
-  .hero-title { grid-area: title; align-self: end; }
-  .hero-text { grid-area: text; align-self: start; align-items: flex-start; @apply text-left mt-6; }
-  .hero-canvasbox { grid-area: canvas; height: 82vh; }
+.hero-dots {
+  @apply flex justify-center items-center gap-2 mb-1;
+}
+.hero-dots .dot {
+  @apply w-2 h-2 rounded-full bg-gray-300 transition-all;
+}
+.hero-dots .dot.active {
+  @apply bg-black w-2.5 h-2.5;
 }
 
 /* ===== Navbar ===== */
@@ -144,11 +143,11 @@ canvas {
 
 /* ===== Hero text ===== */
 .hero-subtitle {
-  @apply text-sm lg:text-base font-bold text-black;
+  @apply text-sm lg:text-base font-medium text-gray-700 mt-2;
 }
 
 .hero-desc {
-  @apply max-w-sm font-normal text-gray-500 text-xs lg:text-sm leading-relaxed;
+  @apply max-w-sm font-normal text-gray-500 text-xs lg:text-sm leading-relaxed mt-1 mb-3;
 }
 
 .hero-cta {
