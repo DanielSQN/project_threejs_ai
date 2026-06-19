@@ -14,16 +14,14 @@ const CameraRig = ({ children }) => {
     const isMobile = window.innerWidth <= 600;
 
     if (snap.intro) {
-      // On the home page the rig drives the camera and a subtle pointer tilt
-      let targetPosition = [-0.4, 0, 2];
-      if (isBreakpoint) targetPosition = [0, 0, 2];
-      if (isMobile) targetPosition = [0, 0.2, 2.5];
-
+      // On the home the shirt sits inside its own (centered) canvas box,
+      // with a subtle pointer tilt for life.
+      const targetPosition = isMobile ? [0, 0, 2.6] : [0, 0, 2.2];
       easing.damp3(state.camera.position, targetPosition, 0.25, delta);
 
       easing.dampE(
         group.current.rotation,
-        [state.pointer.y / 10, -state.pointer.x / 5, 0],
+        [state.pointer.y / 12, -state.pointer.x / 8, 0],
         0.25,
         delta
       );

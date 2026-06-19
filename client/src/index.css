@@ -34,22 +34,63 @@ body {
   height: 100dvh;
 }
 
-/* Let touch gestures drive the 3D controls instead of scrolling/zooming the page */
 canvas {
-  touch-action: none;
   outline: none;
 }
 
-.home {
-  @apply w-full lg:w-fit lg:h-full flex flex-col items-center lg:items-start xl:px-20 sm:px-10 px-6 pt-24 lg:pt-28 absolute z-10;
+/* In the customizer touch drives the 3D controls (no page scroll/zoom) */
+.canvas-fullscreen {
+  @apply absolute inset-0 z-0;
+}
+.canvas-fullscreen canvas {
+  touch-action: none;
 }
 
-.home-content {
-  @apply flex-1 lg:justify-center justify-start flex flex-col gap-7 max-w-xl items-center lg:items-start text-center lg:text-left;
+/* On the home the shirt sits in a box; let vertical swipes scroll the page */
+.hero-canvasbox canvas {
+  touch-action: pan-y;
+}
+
+.home {
+  @apply absolute inset-0 z-10 flex flex-col overflow-y-auto overflow-x-hidden;
+}
+
+/* ===== Hero layout ===== */
+.hero {
+  @apply flex flex-col items-center text-center px-6 pb-4 flex-1;
 }
 
 .head-text {
-  @apply xl:text-[8.5rem] lg:text-[7rem] text-[4.5rem] xl:leading-[8.5rem] lg:leading-[7rem] leading-[4.5rem] font-black tracking-tight text-black;
+  @apply xl:text-[8.5rem] lg:text-[7rem] text-[4.25rem] xl:leading-[8.5rem] lg:leading-[7rem] leading-[4.25rem] font-black tracking-tight text-black;
+}
+
+.hero-canvasbox {
+  @apply w-full;
+  height: 44vh;
+}
+
+.hero-text {
+  @apply flex flex-col items-center gap-4 mt-3;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "title canvas"
+      "text  canvas"
+      "blank carousel";
+    align-items: center;
+    column-gap: 2.5rem;
+    text-align: left;
+    @apply xl:px-20 px-10 pb-0;
+    min-height: 0;
+  }
+  .hero-title { grid-area: title; align-self: end; }
+  .hero-text { grid-area: text; align-self: start; align-items: flex-start; @apply text-left mt-6; }
+  .hero-canvasbox { grid-area: canvas; height: 78vh; }
+  .hero-carousel { grid-area: carousel; }
 }
 
 /* ===== Navbar ===== */
@@ -82,7 +123,8 @@ canvas {
 }
 
 .cart-badge {
-  @apply absolute -top-0.5 -right-0.5 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
+  @apply absolute -top-0.5 -right-0.5 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
+  background: #6d28d9;
 }
 
 /* ===== Gender pills (mobile) ===== */
@@ -102,9 +144,9 @@ canvas {
   @apply border border-gray-300 text-black;
 }
 
-/* ===== Hero ===== */
+/* ===== Hero text ===== */
 .hero-subtitle {
-  @apply mt-5 text-xl lg:text-2xl font-bold text-black;
+  @apply text-xl lg:text-2xl font-bold text-black;
 }
 
 .hero-desc {
@@ -112,32 +154,53 @@ canvas {
 }
 
 .hero-cta {
-  @apply flex flex-wrap items-center justify-center lg:justify-start gap-3;
+  @apply flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-2;
 }
 
-.btn-dark {
-  @apply px-7 py-3.5 rounded-full bg-black text-white text-sm font-semibold hover:bg-gray-800 transition-colors;
+.btn-beige {
+  @apply inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-bold text-black transition-colors;
+  background: #cdbfa3;
+}
+.btn-beige:hover {
+  background: #c2b291;
 }
 
 .btn-ghost {
-  @apply px-7 py-3.5 rounded-full border border-gray-300 text-black text-sm font-semibold hover:border-black transition-colors flex items-center gap-2;
+  @apply px-7 py-3.5 rounded-full border border-gray-300 text-black text-sm font-semibold hover:border-black transition-colors items-center gap-2;
 }
 
-/* ===== Hero pagination dots ===== */
-.hero-dots {
-  @apply absolute bottom-6 left-0 w-full flex justify-center items-center gap-2 z-10;
+/* ===== Hero carousel (dots + arrows) ===== */
+.hero-carousel {
+  @apply flex justify-center items-center gap-2.5 my-4;
 }
 
 .dots-arrow {
-  @apply text-gray-400 hover:text-black text-xl leading-none px-1 transition-colors;
+  @apply text-gray-400 hover:text-black text-2xl leading-none px-2 transition-colors;
 }
 
-.hero-dots .dot {
-  @apply w-2 h-2 rounded-full bg-gray-300 transition-all;
+.hero-carousel .dot {
+  @apply w-2.5 h-2.5 rounded-full bg-gray-300 transition-all;
 }
 
-.hero-dots .dot.active {
-  @apply bg-black w-6;
+.hero-carousel .dot.active {
+  @apply bg-black;
+}
+
+/* ===== Features row ===== */
+.features {
+  @apply w-full flex items-start justify-center gap-6 sm:gap-12 px-6 py-6 border-t border-black/5;
+}
+
+.feature {
+  @apply flex items-center gap-2.5 text-black;
+}
+
+.feature-icon {
+  @apply shrink-0;
+}
+
+.feature-label {
+  @apply text-[10px] sm:text-xs font-bold uppercase leading-tight whitespace-pre-line text-left;
 }
 
 .download-btn {
