@@ -1,13 +1,26 @@
-import { useState } from 'react';
-import { Canvas } from '@react-three/fiber'
+import { useState, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber'
 import { Center, PresentationControls } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
+import { easing } from 'maath';
 
 import state from '../store';
 import Shirt from './Shirt';
 import Backdrop from './Backdrop';
 import CameraRig from './CameraRig';
 import CameraZoom from './CameraZoom';
+
+// Rotates the shirt to the front or the back when the view toggle changes,
+// while PresentationControls still allows free dragging on top.
+const ViewGroup = ({ children }) => {
+  const ref = useRef();
+  const snap = useSnapshot(state);
+  useFrame((_, delta) => {
+    const targetY = snap.activeView === 'back' ? Math.PI : 0;
+    easing.dampAngle(ref.current.rotation, 'y', targetY, 0.3, delta);
+  });
+  return <group ref={ref}>{children}</group>;
+};
 
 const CanvasModel = () => {
   const snap = useSnapshot(state);
@@ -44,9 +57,11 @@ const CanvasModel = () => {
             azimuth={[-Infinity, Infinity]}
             config={{ mass: 1, tension: 500, friction: 26 }}
           >
-            <Center>
-              <Shirt />
-            </Center>
+            <ViewGroup>
+              <Center>
+                <Shirt />
+              </Center>
+            </ViewGroup>
           </PresentationControls>
         )}
       </CameraRig>
