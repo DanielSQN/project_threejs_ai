@@ -245,6 +245,10 @@ canvas {
   @apply bg-black text-white;
 }
 
+.cz-rotate-hint {
+  @apply flex items-center gap-2 text-xs font-medium text-gray-600 bg-white/70 backdrop-blur px-3 py-1.5 rounded-full;
+}
+
 .cz-menu {
   @apply pointer-events-auto w-full lg:w-auto lg:min-w-[460px] lg:max-w-[600px] bg-white rounded-t-3xl lg:rounded-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.10)] lg:shadow-[0_10px_40px_rgba(0,0,0,0.12)] flex flex-col;
 }

@@ -49,11 +49,12 @@ const Home = () => {
     state.breezeTick += 1;
   }, [gender, idx]);
 
-  // auto-advance every ~4.5s
+  // auto-advance every ~4.5s; restarts whenever the design changes (manual
+  // swipe / arrow / dot included), so a manual change resets the timer.
   useEffect(() => {
     const id = setInterval(() => setIdx((p) => (p + 1) % designs.length), 4500);
     return () => clearInterval(id);
-  }, [gender, designs.length]);
+  }, [gender, idx, designs.length]);
 
   const go = (dir) => setIdx((p) => (p + dir + designs.length) % designs.length);
   const selectGender = (g) => { setGender(g); setIdx(0); };

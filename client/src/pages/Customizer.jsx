@@ -12,9 +12,8 @@ const I = {
   bag: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>,
   color: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".6" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".6" fill="currentColor" /><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2C19.52 16.4 22 13.91 22 11c0-4.97-4.5-9-10-9z" /></svg>,
   design: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21" /></svg>,
-  verse: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2h-4v6H4v4h6v10h4V12h6V8h-6z" /></svg>,
   view: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>,
-  ai: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" /></svg>,
+  hand: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2" /><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2" /><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" /><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /></svg>,
 };
 
 const COLORS = [
@@ -28,11 +27,9 @@ const COLORS = [
 ];
 
 const TOOLS = [
+  { id: 'view', label: 'Vista', icon: I.view },
   { id: 'color', label: 'Color', icon: I.color },
   { id: 'design', label: 'Diseño', icon: I.design },
-  { id: 'verse', label: 'Versículo', icon: I.verse },
-  { id: 'view', label: 'Vista', icon: I.view },
-  { id: 'ai', label: 'IA', icon: I.ai },
 ];
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -110,14 +107,6 @@ const Customizer = () => {
         </>
       );
     }
-    if (activeTool === 'verse' || activeTool === 'ai') {
-      return (
-        <div className="cz-soon">
-          <p className="cz-menu-title">{activeTool === 'verse' ? 'Versículo' : 'IA'}</p>
-          <p className="cz-soon-text">Próximamente.</p>
-        </div>
-      );
-    }
     return null;
   };
 
@@ -146,6 +135,8 @@ const Customizer = () => {
           <button className={snap.activeView === 'front' ? 'active' : ''} onClick={() => setView('front')}>Frente</button>
           <button className={snap.activeView === 'back' ? 'active' : ''} onClick={() => setView('back')}>Espalda</button>
         </div>
+
+        <p className="cz-rotate-hint">{I.hand} Arrastra para rotar la prenda</p>
 
         <div className={`cz-menu ${expanded ? 'expanded' : ''}`}>
           {expanded && (
