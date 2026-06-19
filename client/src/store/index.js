@@ -9,6 +9,8 @@ const state = proxy({
   logoDecal: './brand-logo.png',
   fullDecal: './threejs.png',
   logoDecalBack: './brand-logo.png',
+  // home hero
+  breezeTick: 0, // bump to trigger a wind "gust" on the shirt
   // customizer
   activeView: 'front', // 'front' | 'back' -> rotates the shirt
   size: 'M',

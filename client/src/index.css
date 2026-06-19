@@ -61,7 +61,7 @@ canvas {
 }
 
 .head-text {
-  @apply xl:text-[7rem] lg:text-[6rem] text-[3.75rem] xl:leading-[6.5rem] lg:leading-[5.5rem] leading-[3.75rem] font-black tracking-tight text-black mt-1;
+  @apply text-[2.3rem] sm:text-[3rem] lg:text-[4.25rem] xl:text-[5rem] leading-none font-black tracking-tight text-black mt-1 whitespace-nowrap;
 }
 
 /* Stage holds the shirt + side arrows; grows to fill the leftover space so
@@ -75,7 +75,7 @@ canvas {
 }
 
 .hero-arrow {
-  @apply absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white text-black shadow-md border border-black/5 hover:bg-gray-50 active:scale-95 transition;
+  @apply hidden lg:flex absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white text-black shadow-md border border-black/5 hover:bg-gray-50 active:scale-95 transition;
 }
 .hero-arrow.left { left: 0.25rem; }
 .hero-arrow.right { right: 0.25rem; }
@@ -124,21 +124,15 @@ canvas {
   background: #6d28d9;
 }
 
-/* ===== Gender pills (mobile) ===== */
-.gender-pills {
-  @apply flex items-center justify-center gap-3 mt-1 mb-2;
+/* ===== Gender segmented control ===== */
+.gender-seg {
+  @apply inline-flex items-center bg-white border border-gray-200 rounded-full p-1 mt-1 mb-2 shadow-sm;
 }
-
-.pill {
-  @apply flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold;
+.seg {
+  @apply flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold text-gray-700 transition-colors;
 }
-
-.pill-dark {
+.seg.active {
   @apply bg-black text-white;
-}
-
-.pill-outline {
-  @apply border border-gray-300 text-black;
 }
 
 /* ===== Hero text ===== */
