@@ -29,7 +29,7 @@ const CameraRig = ({ children }) => {
       // In the customizer PresentationControls rotates the shirt and CameraZoom
       // owns the zoom factor. The rig just keeps the camera centered and the
       // group upright.
-      const targetPosition = isMobile ? [0, 0, 2.5] : [0, 0, 2];
+      const targetPosition = isMobile ? [0, -0.15, 1.8] : [0, -0.1, 2.05];
       easing.damp3(state.camera.position, targetPosition, 0.25, delta);
       easing.dampE(group.current.rotation, [0, 0, 0], 0.25, delta);
     }
