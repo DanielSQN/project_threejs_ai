@@ -52,25 +52,25 @@ canvas {
 }
 
 .home {
-  @apply absolute inset-0 z-10 flex flex-col overflow-y-auto overflow-x-hidden;
+  @apply absolute inset-0 z-10 flex flex-col overflow-hidden;
 }
 
 /* ===== Hero layout ===== */
 .hero {
-  @apply flex flex-col items-center text-center px-6 pb-4 flex-1;
+  @apply flex flex-col items-center text-center px-6 pb-1 flex-1 min-h-0;
 }
 
 .head-text {
-  @apply xl:text-[8.5rem] lg:text-[7rem] text-[4.25rem] xl:leading-[8.5rem] lg:leading-[7rem] leading-[4.25rem] font-black tracking-tight text-black;
+  @apply xl:text-[8.5rem] lg:text-[7rem] text-[3.75rem] xl:leading-[8.5rem] lg:leading-[7rem] leading-[3.75rem] font-black tracking-tight text-black;
 }
 
+/* The shirt box grows to fill the leftover space so the page never scrolls */
 .hero-canvasbox {
-  @apply w-full;
-  height: 44vh;
+  @apply w-full flex-1 min-h-0;
 }
 
 .hero-text {
-  @apply flex flex-col items-center gap-4 mt-3;
+  @apply flex flex-col items-center gap-2 mt-1;
 }
 
 @media (min-width: 1024px) {
@@ -129,7 +129,7 @@ canvas {
 
 /* ===== Gender pills (mobile) ===== */
 .gender-pills {
-  @apply flex items-center justify-center gap-3 mb-7;
+  @apply flex items-center justify-center gap-3 mt-1 mb-2;
 }
 
 .pill {
@@ -171,7 +171,7 @@ canvas {
 
 /* ===== Hero carousel (dots + arrows) ===== */
 .hero-carousel {
-  @apply flex justify-center items-center gap-2.5 my-4;
+  @apply flex justify-center items-center gap-2.5 my-1;
 }
 
 .dots-arrow {
@@ -188,7 +188,7 @@ canvas {
 
 /* ===== Features row ===== */
 .features {
-  @apply w-full flex items-start justify-center gap-6 sm:gap-12 px-6 py-6 border-t border-black/5;
+  @apply w-full flex items-center justify-center gap-5 sm:gap-12 px-5 py-3 border-t border-black/5;
 }
 
 .feature {
