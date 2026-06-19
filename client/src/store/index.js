@@ -9,6 +9,11 @@ const state = proxy({
   logoDecal: './brand-logo.png',
   fullDecal: './threejs.png',
   logoDecalBack: './brand-logo.png',
+  // customizer
+  activeView: 'front', // 'front' | 'back' -> rotates the shirt
+  size: 'M',
+  quantity: 1,
+  cartCount: 2,
 });
 
 export default state;
