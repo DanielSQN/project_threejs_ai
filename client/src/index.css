@@ -41,24 +41,24 @@ canvas {
 }
 
 .home {
-  @apply w-fit xl:h-full flex justify-start items-start flex-col xl:px-20 sm:px-10 px-6 pt-24 xl:pt-28 absolute z-10;
+  @apply w-full lg:w-fit lg:h-full flex flex-col items-center lg:items-start xl:px-20 sm:px-10 px-6 pt-24 lg:pt-28 absolute z-10;
 }
 
 .home-content {
-  @apply flex-1 xl:justify-center justify-start flex flex-col gap-8 max-w-xl;
+  @apply flex-1 lg:justify-center justify-start flex flex-col gap-7 max-w-xl items-center lg:items-start text-center lg:text-left;
 }
 
 .head-text {
-  @apply xl:text-[8.5rem] text-[5rem] xl:leading-[8.5rem] leading-[5rem] font-black tracking-tight text-black;
+  @apply xl:text-[8.5rem] lg:text-[7rem] text-[4.5rem] xl:leading-[8.5rem] lg:leading-[7rem] leading-[4.5rem] font-black tracking-tight text-black;
 }
 
 /* ===== Navbar ===== */
 .navbar {
-  @apply w-full flex items-center justify-between xl:px-20 sm:px-10 px-6 py-5;
+  @apply w-full flex items-center justify-between xl:px-20 sm:px-10 px-5 py-4;
 }
 
-.nav-logo {
-  @apply flex flex-col leading-[0.95] font-black tracking-tight text-black text-sm uppercase;
+.nav-logo-img {
+  @apply h-10 w-auto object-contain;
 }
 
 .nav-links {
@@ -66,24 +66,45 @@ canvas {
 }
 
 .nav-links li {
-  @apply cursor-pointer hover:text-black transition-colors;
+  @apply cursor-pointer hover:text-black transition-colors pb-1;
+}
+
+.nav-links li.active {
+  @apply text-black font-semibold border-b-2 border-black;
 }
 
 .nav-icons {
-  @apply flex items-center gap-3 text-black;
+  @apply flex items-center gap-2 text-black;
 }
 
 .nav-icon-btn {
-  @apply relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors;
+  @apply relative w-9 h-9 items-center justify-center rounded-full hover:bg-black/5 transition-colors;
 }
 
 .cart-badge {
   @apply absolute -top-0.5 -right-0.5 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
 }
 
+/* ===== Gender pills (mobile) ===== */
+.gender-pills {
+  @apply flex items-center justify-center gap-3 mb-7;
+}
+
+.pill {
+  @apply flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold;
+}
+
+.pill-dark {
+  @apply bg-black text-white;
+}
+
+.pill-outline {
+  @apply border border-gray-300 text-black;
+}
+
 /* ===== Hero ===== */
-.hero-eyebrow {
-  @apply text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-4;
+.hero-subtitle {
+  @apply mt-5 text-xl lg:text-2xl font-bold text-black;
 }
 
 .hero-desc {
@@ -91,7 +112,7 @@ canvas {
 }
 
 .hero-cta {
-  @apply flex flex-wrap items-center gap-3;
+  @apply flex flex-wrap items-center justify-center lg:justify-start gap-3;
 }
 
 .btn-dark {
@@ -105,6 +126,10 @@ canvas {
 /* ===== Hero pagination dots ===== */
 .hero-dots {
   @apply absolute bottom-6 left-0 w-full flex justify-center items-center gap-2 z-10;
+}
+
+.dots-arrow {
+  @apply text-gray-400 hover:text-black text-xl leading-none px-1 transition-colors;
 }
 
 .hero-dots .dot {
