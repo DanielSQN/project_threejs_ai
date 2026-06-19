@@ -1,6 +1,6 @@
 import React from 'react';
 
-const links = ['Diseños', 'Colecciones', 'Inspiración', 'Cómo funciona'];
+const links = ['Hombre', 'Mujer', 'Diseños', 'Colecciones', 'Cómo funciona'];
 
 const IconSearch = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -35,25 +35,22 @@ const IconMenu = () => (
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <div className="nav-logo">
-        <span>VISTE</span>
-        <span>TU FE</span>
-      </div>
+      <img src="./brand-logo.png" alt="Viste tu fe" className="nav-logo-img" />
 
       <ul className="nav-links">
-        {links.map((link) => (
-          <li key={link}>{link}</li>
+        {links.map((link, i) => (
+          <li key={link} className={i === 0 ? 'active' : ''}>{link}</li>
         ))}
       </ul>
 
       <div className="nav-icons">
-        <button aria-label="Buscar" className="nav-icon-btn lg:flex hidden"><IconSearch /></button>
-        <button aria-label="Cuenta" className="nav-icon-btn lg:flex hidden"><IconUser /></button>
-        <button aria-label="Carrito" className="nav-icon-btn nav-cart">
+        <button aria-label="Buscar" className="nav-icon-btn lg:inline-flex hidden"><IconSearch /></button>
+        <button aria-label="Cuenta" className="nav-icon-btn lg:inline-flex hidden"><IconUser /></button>
+        <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex"><IconMenu /></button>
+        <button aria-label="Carrito" className="nav-icon-btn nav-cart inline-flex">
           <IconBag />
-          <span className="cart-badge">0</span>
+          <span className="cart-badge">2</span>
         </button>
-        <button aria-label="Menú" className="nav-icon-btn lg:hidden flex"><IconMenu /></button>
       </div>
     </nav>
   );

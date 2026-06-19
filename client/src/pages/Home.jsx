@@ -10,6 +10,13 @@ import {
   slideAnimation
 } from '../config/motion';
 
+const UserIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
 const Home = () => {
   const snap = useSnapshot(state);
 
@@ -22,21 +29,25 @@ const Home = () => {
           </motion.div>
 
           <motion.section className="home" {...slideAnimation('left')}>
+            <div className="gender-pills lg:hidden">
+              <button className="pill pill-dark"><UserIcon /> Hombre</button>
+              <button className="pill pill-outline"><UserIcon /> Mujer</button>
+            </div>
+
             <motion.div className="home-content" {...headContainerAnimation}>
               <motion.div {...headTextAnimation}>
-                <p className="hero-eyebrow">Diseños que hablan de lo que crees</p>
                 <h1 className="head-text">
-                  VISTE <br className="xl:block hidden" /> TU FE.
+                  VISTE <br /> TU FE.
                 </h1>
+                <p className="hero-subtitle">Diseños que hablan de lo que crees.</p>
               </motion.div>
 
               <motion.div
                 {...headContentAnimation}
-                className="flex flex-col gap-7"
+                className="flex flex-col gap-6 items-center lg:items-start"
               >
                 <p className="hero-desc">
-                  Diseños únicos, estampados y vestuario que conectan con tu fe.
-                  Personalízalos en 3D y <strong>llévalos contigo</strong> con tu propio estilo.
+                  Personaliza colores, estampados y vestuario en tiempo real con nuestra herramienta 3D.
                 </p>
 
                 <div className="hero-cta">
@@ -53,9 +64,11 @@ const Home = () => {
           </motion.section>
 
           <motion.div {...slideAnimation('up')} className="hero-dots">
+            <button className="dots-arrow" aria-label="Anterior">‹</button>
             <span className="dot active" />
             <span className="dot" />
             <span className="dot" />
+            <button className="dots-arrow" aria-label="Siguiente">›</button>
           </motion.div>
         </>
       )}
