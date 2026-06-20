@@ -89,10 +89,20 @@ const Home = () => {
           </button>
         </div>
 
-        <motion.h1 className="head-text" {...headTextAnimation}>
+        <motion.h1
+          className="head-text"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
           VISTE TU FE.
         </motion.h1>
-        <motion.p className="hero-subtitle" {...headContentAnimation}>
+        <motion.p
+          className="hero-subtitle"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.06, ease: 'easeOut' }}
+        >
           Diseños que hablan de lo que crees.
         </motion.p>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 
-import state from '../store';
+import state, { addToCart, cartCount } from '../store';
 import Canvas from '../canvas';
 import { reader } from '../config/helpers';
 
@@ -10,6 +10,7 @@ const I = {
   back: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>,
   save: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>,
   bag: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>,
+  bagPlus: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="12" y1="10" x2="12" y2="16" /><line x1="9" y1="13" x2="15" y2="13" /></svg>,
   color: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".6" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".6" fill="currentColor" /><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2C19.52 16.4 22 13.91 22 11c0-4.97-4.5-9-10-9z" /></svg>,
   design: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21" /></svg>,
   view: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>,
@@ -39,15 +40,28 @@ const Customizer = () => {
   const [activeTool, setActiveTool] = useState('view'); // collapsed by default
   const expanded = activeTool !== 'view';
 
-  // the editor is a fixed fullscreen overlay -> lock document scroll while open
+  // the editor is a fixed fullscreen overlay -> lock document scroll while open;
+  // also start facing the front.
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    state.shirtRotY = 0;
+    state.activeView = 'front';
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  const setView = (v) => { state.activeView = v; };
-  const addToCart = () => { state.cartCount = snap.cartCount + snap.quantity; };
+  // Frente/Espalda rotate to the nearest canonical side so the buttons always
+  // match the side they name, even after a free drag.
+  const setView = (v) => {
+    const base = Math.round(state.shirtRotY / (Math.PI * 2)) * (Math.PI * 2);
+    state.shirtRotY = v === 'back' ? base + Math.PI : base;
+    state.activeView = v;
+  };
+  const count = cartCount(snap.cart);
+  const handleAddToCart = () => {
+    addToCart({ name: 'Diseño personalizado', price: 99900, color: snap.color, size: snap.size, qty: snap.quantity });
+    state.cartOpen = true;
+  };
 
   const uploadDesign = (side, e) => {
     const file = e.target.files[0];
@@ -126,12 +140,15 @@ const Customizer = () => {
       <header className="cz-top">
         <button className="cz-back" onClick={() => (state.intro = true)}>{I.back} <span className="cz-back-t">Volver</span></button>
         <div className="cz-top-right">
+          <button className="cz-icon-cart" onClick={() => (state.cartOpen = true)} aria-label="Ver carrito">
+            {I.bag}
+            {count > 0 && <span className="cart-badge">{count}</span>}
+          </button>
           <select className="cz-size" value={snap.size} onChange={(e) => (state.size = e.target.value)}>
             {SIZES.map((s) => <option key={s} value={s}>Talla {s}</option>)}
           </select>
-          <button className="cz-cart" onClick={addToCart}>
-            {I.bag} <span className="cz-cart-t">Agregar al carrito</span>
-            {snap.cartCount > 0 && <span className="cart-badge">{snap.cartCount}</span>}
+          <button className="cz-cart" onClick={handleAddToCart}>
+            {I.bagPlus} <span className="cz-cart-t">Agregar</span>
           </button>
         </div>
       </header>

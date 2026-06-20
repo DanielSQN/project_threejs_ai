@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import state from '../store';
+import state, { cartCount } from '../store';
 
 const links = [
   { label: 'Hombre', target: 'top' },
@@ -52,6 +52,10 @@ const IconMenu = () => (
 
 const Navbar = () => {
   const snap = useSnapshot(state);
+  const count = cartCount(snap.cart);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const onLink = (target) => { goTo(target); setMenuOpen(false); };
 
   return (
     <nav className="navbar">
@@ -66,12 +70,36 @@ const Navbar = () => {
       <div className="nav-icons">
         <button aria-label="Buscar" className="nav-icon-btn lg:inline-flex hidden"><IconSearch /></button>
         <button aria-label="Cuenta" className="nav-icon-btn lg:inline-flex hidden"><IconUser /></button>
-        <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex"><IconMenu /></button>
-        <button aria-label="Carrito" className="nav-icon-btn nav-cart inline-flex">
+        <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex" onClick={() => setMenuOpen(true)}><IconMenu /></button>
+        <button aria-label="Ver carrito" className="nav-icon-btn nav-cart inline-flex" onClick={() => (state.cartOpen = true)}>
           <IconBag />
-          {snap.cartCount > 0 && <span className="cart-badge">{snap.cartCount}</span>}
+          {count > 0 && <span className="cart-badge">{count}</span>}
         </button>
       </div>
+
+      {menuOpen && (
+        <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
+          <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="mm-head">
+              <img src="./brand-logo.png" alt="Viste tu fe" className="h-9 w-auto object-contain" />
+              <button className="mm-close" onClick={() => setMenuOpen(false)} aria-label="Cerrar">✕</button>
+            </div>
+            <ul className="mm-links">
+              {links.map((link) => (
+                <li key={link.label} onClick={() => onLink(link.target)}>{link.label}</li>
+              ))}
+            </ul>
+            <div className="mm-actions">
+              <button className="mm-cart" onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
+                <IconBag /> Ver carrito{count > 0 ? ` (${count})` : ''}
+              </button>
+              <button className="btn-beige w-full justify-center" onClick={() => { state.intro = false; setMenuOpen(false); }}>
+                Personalizar ahora <span aria-hidden>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import state from '../store';
+import state, { addToCart, formatPrice } from '../store';
 
 /* ---- t-shirt silhouettes per style ---- */
 const TEE = {
@@ -25,14 +25,22 @@ const TShirt = ({ color, variant = 'classic' }) => (
   </svg>
 );
 
-const CrossIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2h-4v6H4v4h6v10h4V12h6V8h-6z" /></svg>
-);
 const CubeIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
 );
-const BagIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+const StarIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z" /></svg>
+);
+const BoltIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" /></svg>
+);
+const BagPlusIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="12" y1="10" x2="12" y2="16" />
+    <line x1="9" y1="13" x2="15" y2="13" />
+  </svg>
 );
 
 const STYLES = [
@@ -43,10 +51,10 @@ const STYLES = [
 ];
 
 const FEATURED = [
-  { name: 'Jesús es Rey', verse: 'Apocalipsis 19:16', price: '$89.900', color: '#1c1c1c', logo: './brand-logo.png' },
-  { name: 'Todo lo puedo en Cristo', verse: 'Filipenses 4:13', price: '$89.900', color: '#D8CFBE', logo: './brand-logo.png' },
-  { name: 'Jehová es mi pastor', verse: 'Salmo 23:1', price: '$89.900', color: '#2B3A55', logo: './brand-logo.png' },
-  { name: 'La Visión', verse: 'Habacuc 2:2', price: '$94.900', color: '#A98B6A', logo: './brand-logo.png' },
+  { name: 'Jesús es Rey', verse: 'Apocalipsis 19:16', price: 89900, color: '#1c1c1c', logo: './brand-logo.png' },
+  { name: 'Todo lo puedo en Cristo', verse: 'Filipenses 4:13', price: 89900, color: '#D8CFBE', logo: './brand-logo.png' },
+  { name: 'Jehová es mi pastor', verse: 'Salmo 23:1', price: 89900, color: '#2B3A55', logo: './brand-logo.png' },
+  { name: 'La Visión', verse: 'Habacuc 2:2', price: 94900, color: '#A98B6A', logo: './brand-logo.png' },
 ];
 
 const COLLECTIONS = [
@@ -57,8 +65,8 @@ const COLLECTIONS = [
 
 const FEATURES = [
   { icon: <CubeIcon />, label: 'VISTA 3D\nREALISTA' },
-  { icon: <CrossIcon />, label: 'DISEÑOS\nEXCLUSIVOS' },
-  { icon: <CrossIcon />, label: 'PERSONALIZACIÓN\nINSTANTÁNEA' },
+  { icon: <StarIcon />, label: 'DISEÑOS\nEXCLUSIVOS' },
+  { icon: <BoltIcon />, label: 'PERSONALIZACIÓN\nINSTANTÁNEA' },
 ];
 
 const scrollTo = (id) => {
@@ -75,9 +83,10 @@ const Sections = () => {
     state.intro = false;
   };
 
-  const addToCart = (e) => {
+  const addItem = (e, d) => {
     e.stopPropagation();
-    state.cartCount += 1;
+    addToCart({ name: d.name, price: d.price, color: d.color, size: 'M', qty: 1 });
+    state.cartOpen = true;
   };
 
   return (
@@ -124,8 +133,8 @@ const Sections = () => {
                 <span className="design-name">{d.name}</span>
                 <span className="design-verse">{d.verse}</span>
                 <div className="design-bottom">
-                  <span className="design-price">{d.price}</span>
-                  <span className="design-add" onClick={addToCart} role="button" aria-label="Agregar al carrito"><BagIcon /></span>
+                  <span className="design-price">{formatPrice(d.price)}</span>
+                  <span className="design-add" onClick={(e) => addItem(e, d)} role="button" aria-label="Agregar al carrito"><BagPlusIcon /></span>
                 </div>
               </div>
             </button>
