@@ -140,15 +140,12 @@ const Customizer = () => {
       <header className="cz-top">
         <button className="cz-back" onClick={() => (state.intro = true)}>{I.back} <span className="cz-back-t">Volver</span></button>
         <div className="cz-top-right">
-          <button className="cz-icon-cart" onClick={() => (state.cartOpen = true)} aria-label="Ver carrito">
-            {I.bag}
-            {count > 0 && <span className="cart-badge">{count}</span>}
-          </button>
           <select className="cz-size" value={snap.size} onChange={(e) => (state.size = e.target.value)}>
             {SIZES.map((s) => <option key={s} value={s}>Talla {s}</option>)}
           </select>
-          <button className="cz-cart" onClick={handleAddToCart}>
-            {I.bagPlus} <span className="cz-cart-t">Agregar</span>
+          <button className="cz-icon-cart" onClick={() => (state.cartOpen = true)} aria-label="Ver carrito">
+            {I.bag}
+            {count > 0 && <span className="cart-badge">{count}</span>}
           </button>
         </div>
       </header>
@@ -162,6 +159,10 @@ const Customizer = () => {
 
         <p className="cz-rotate-hint">{I.hand} Arrastra para rotar la prenda</p>
 
+        <button className="cz-addcart-fab" onClick={handleAddToCart}>
+          {I.bagPlus} Agregar al carrito
+        </button>
+
         <div className={`cz-menu ${expanded ? 'expanded' : ''}`}>
           {expanded && (
             <div className="cz-menu-panel">
@@ -173,7 +174,7 @@ const Customizer = () => {
               <button
                 key={t.id}
                 className={`cz-tab ${activeTool === t.id ? 'active' : ''}`}
-                onClick={() => setActiveTool(t.id)}
+                onClick={() => setActiveTool(activeTool === t.id ? 'view' : t.id)}
               >
                 <span className="cz-tab-icon">{t.icon}</span>
                 <span>{t.label}</span>
