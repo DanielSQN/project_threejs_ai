@@ -1,6 +1,24 @@
 import React from 'react';
+import { useSnapshot } from 'valtio';
 
-const links = ['Hombre', 'Mujer', 'Diseños', 'Colecciones', 'Cómo funciona'];
+import state from '../store';
+
+const links = [
+  { label: 'Hombre', target: 'top' },
+  { label: 'Mujer', target: 'top' },
+  { label: 'Diseños', target: 'disenos' },
+  { label: 'Colecciones', target: 'colecciones' },
+  { label: 'Cómo funciona', target: 'beneficios' },
+];
+
+const goTo = (target) => {
+  if (target === 'top') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  const el = document.getElementById(target);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 const IconSearch = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,13 +51,15 @@ const IconMenu = () => (
 );
 
 const Navbar = () => {
+  const snap = useSnapshot(state);
+
   return (
     <nav className="navbar">
-      <img src="./brand-logo.png" alt="Viste tu fe" className="nav-logo-img" />
+      <img src="./brand-logo.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goTo('top')} />
 
       <ul className="nav-links">
         {links.map((link, i) => (
-          <li key={link} className={i === 0 ? 'active' : ''}>{link}</li>
+          <li key={link.label} className={i === 0 ? 'active' : ''} onClick={() => goTo(link.target)}>{link.label}</li>
         ))}
       </ul>
 
@@ -49,7 +69,7 @@ const Navbar = () => {
         <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex"><IconMenu /></button>
         <button aria-label="Carrito" className="nav-icon-btn nav-cart inline-flex">
           <IconBag />
-          <span className="cart-badge">2</span>
+          {snap.cartCount > 0 && <span className="cart-badge">{snap.cartCount}</span>}
         </button>
       </div>
     </nav>

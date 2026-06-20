@@ -15,23 +15,24 @@ html {
   }
 }
 
-html,
+html {
+  height: 100%;
+}
+
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
 }
 
 body {
-  overflow: hidden;
-  overscroll-behavior: none;
   background: #f6f4ef;
+  -webkit-overflow-scrolling: touch;
 }
 
+/* the document scrolls naturally so mobile pull-to-refresh works */
 .app {
-  @apply relative w-full overflow-hidden;
-  height: 100vh;
-  height: 100dvh;
+  @apply relative w-full;
 }
 
 canvas {
@@ -52,7 +53,7 @@ canvas {
 }
 
 .home {
-  @apply absolute inset-0 z-10 flex flex-col overflow-y-auto overflow-x-hidden;
+  @apply relative w-full flex flex-col overflow-x-hidden;
 }
 
 /* The hero is exactly the first screen; landing sections scroll below it */
@@ -265,8 +266,17 @@ canvas {
 .design-verse {
   @apply text-xs text-gray-400;
 }
+.design-bottom {
+  @apply flex items-center justify-between mt-2;
+}
 .design-price {
-  @apply text-sm font-semibold text-black mt-1;
+  @apply text-sm font-semibold text-black;
+}
+.design-add {
+  @apply w-8 h-8 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-800 transition-colors;
+}
+.coll-link {
+  @apply text-xs font-semibold text-black/70 mt-1;
 }
 
 /* Colecciones */
@@ -312,7 +322,7 @@ canvas {
    Customizer (phase 2)
    ===================================================================== */
 .customizer {
-  @apply absolute inset-0 z-10 overflow-hidden;
+  @apply fixed inset-0 z-40 overflow-hidden;
   background: #f6f4ef;
 }
 
@@ -346,7 +356,7 @@ canvas {
 
 /* ---- bottom area: view toggle + menu ---- */
 .cz-bottom {
-  @apply absolute left-0 right-0 bottom-0 z-20 flex flex-col items-center gap-3 pb-4 lg:pb-6 pointer-events-none;
+  @apply absolute left-0 right-0 bottom-0 z-20 flex flex-col items-center gap-3 pb-0 lg:pb-6 pointer-events-none;
 }
 
 .cz-viewtoggle {
@@ -375,7 +385,7 @@ canvas {
 }
 
 .cz-tabs {
-  @apply flex items-center justify-between px-3 sm:px-5 py-3;
+  @apply flex items-center justify-between px-3 sm:px-5 py-3 pb-5 lg:pb-3;
 }
 .cz-tab {
   @apply flex flex-col items-center gap-1 text-[11px] font-semibold text-gray-400 px-2;
