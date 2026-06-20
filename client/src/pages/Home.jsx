@@ -42,11 +42,21 @@ const Home = () => {
     state.breezeTick += 1;
   }, [gender, idx]);
 
-  // the style/colour changes on its own every ~4.5s (no manual controls); the
-  // shirt also auto-rotates and can be dragged by hand (handled in the canvas)
+  // the style/colour changes on its own (no manual controls). It starts with a
+  // quick burst through a few styles so the visitor immediately sees it cycling,
+  // then settles into a relaxed pace. The shirt also auto-rotates and can be
+  // dragged by hand (handled in the canvas).
   useEffect(() => {
-    const id = setInterval(() => setIdx((p) => (p + 1) % designs.length), 4500);
-    return () => clearInterval(id);
+    let count = 0;
+    let timer;
+    const tick = () => {
+      setIdx((p) => (p + 1) % designs.length);
+      count += 1;
+      const delay = count < 4 ? 800 : 4500; // fast intro, then relaxed
+      timer = setTimeout(tick, delay);
+    };
+    timer = setTimeout(tick, 600); // first change comes quickly
+    return () => clearTimeout(timer);
   }, [gender, designs.length]);
 
   return (
