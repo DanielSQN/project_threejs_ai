@@ -735,11 +735,8 @@ input[type="file"] {
 .mm-links li {
   @apply py-3.5 text-lg font-semibold text-black border-b border-black/5 cursor-pointer;
 }
-.mm-actions {
-  @apply flex flex-col gap-3 mt-4;
-}
 .mm-cart {
-  @apply flex items-center justify-center gap-2 py-3 rounded-full border border-gray-300 text-sm font-semibold text-black;
+  @apply flex items-center justify-center gap-2 w-full py-3.5 mt-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors;
 }
 
 /* ===== Toast (added to cart) ===== */

@@ -99,10 +99,11 @@ const Navbar = () => {
               {links.map((link) => (
                 <li key={link.label} onClick={() => onLink(link)}>{link.label}</li>
               ))}
-              <li onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
-                Ver carrito{count > 0 ? ` (${count})` : ''}
-              </li>
             </ul>
+
+            <button className="mm-cart" onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
+              <IconBag /> Ver carrito{count > 0 ? ` (${count})` : ''}
+            </button>
           </div>
         </div>
       )}
