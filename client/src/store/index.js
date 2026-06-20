@@ -19,6 +19,7 @@ const state = proxy({
   logoBackOffsetY: 0,
   // home hero
   gender: 'hombre', // 'hombre' | 'mujer' -> drives the hero catalog (shared w/ nav)
+  page: 'home', // 'home' | 'disenos' | 'colecciones' -> simple section routing
   breezeTick: 0, // bump to trigger a wind "gust" on the shirt
   // customizer
   activeView: 'front', // 'front' | 'back' -> derived from / drives shirtRotY
@@ -35,6 +36,26 @@ const state = proxy({
 export const cartCount = (cart = state.cart) => cart.reduce((sum, i) => sum + i.qty, 0);
 
 export const formatPrice = (n) => '$' + Number(n).toLocaleString('es-CO');
+
+// simple section "routing" -------------------------------------------------
+export const goPage = (page) => {
+  state.intro = true;
+  state.cartOpen = false;
+  state.page = page;
+  window.scrollTo({ top: 0, behavior: 'auto' });
+};
+
+// jump to the home and scroll to one of its anchored sections (e.g. beneficios)
+export const goHomeSection = (id) => {
+  state.intro = true;
+  state.cartOpen = false;
+  state.page = 'home';
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 60);
+};
 
 export const addToCart = (item) => {
   const qty = item.qty || 1;

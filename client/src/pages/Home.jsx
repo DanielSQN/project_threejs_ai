@@ -112,6 +112,16 @@ const Home = () => {
             Personalizar ahora <span aria-hidden>→</span>
           </button>
         </div>
+
+        {/* mobile-only "scroll for more" hint */}
+        <button
+          className="hero-scroll-hint lg:hidden"
+          onClick={() => document.getElementById('beneficios')?.scrollIntoView({ behavior: 'smooth' })}
+          aria-label="Desliza para ver más"
+        >
+          <span>Desliza para ver más</span>
+          <svg className="hero-scroll-chevron" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+        </button>
       </div>
 
       <Sections />
