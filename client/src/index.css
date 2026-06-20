@@ -68,10 +68,14 @@ canvas {
 /* ===== Hero layout (product hero, single centered column) ===== */
 .hero {
   @apply flex flex-col items-center text-center w-full flex-1 min-h-0 px-6 pb-3;
+  padding-top: 4rem;
+}
+@media (min-width: 640px) {
+  .hero { padding-top: 5rem; }
 }
 
 .head-text {
-  @apply text-[2.3rem] sm:text-[3rem] lg:text-[4.25rem] xl:text-[5rem] leading-none font-black tracking-tight text-black mt-1 whitespace-nowrap;
+  @apply text-[2.1rem] sm:text-[3rem] lg:text-[4.25rem] xl:text-[5rem] leading-none font-black tracking-tight text-black mt-1 whitespace-nowrap;
 }
 
 /* Stage holds the shirt + side arrows; grows to fill the leftover space so
@@ -100,49 +104,64 @@ canvas {
   @apply bg-black w-2.5 h-2.5;
 }
 
-/* ===== Navbar ===== */
+/* ===== Navbar (fixed, translucent) ===== */
 .navbar {
-  @apply w-full flex items-center justify-between xl:px-20 sm:px-10 px-5 py-4;
+  @apply fixed top-0 left-0 w-full z-50 flex items-center justify-between xl:px-20 sm:px-10 px-4 py-3;
+  background: rgba(246, 244, 239, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.nav-left {
+  @apply flex items-center gap-6;
 }
 
 .nav-logo-img {
-  @apply h-10 w-auto object-contain;
+  @apply h-9 sm:h-10 w-auto object-contain cursor-pointer;
 }
 
 .nav-links {
-  @apply hidden lg:flex items-center gap-9 text-sm font-medium text-gray-600;
+  @apply hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600;
 }
 
 .nav-links li {
-  @apply cursor-pointer hover:text-black transition-colors pb-1;
+  @apply cursor-pointer hover:text-black transition-colors;
 }
 
-.nav-links li.active {
-  @apply text-black font-semibold border-b-2 border-black;
+/* gender selector centered in the navbar */
+.nav-gender {
+  @apply absolute left-1/2 -translate-x-1/2;
 }
 
-.nav-icons {
-  @apply flex items-center gap-2 text-black;
+.nav-right {
+  @apply flex items-center gap-1;
 }
 
 .nav-icon-btn {
-  @apply relative w-9 h-9 items-center justify-center rounded-full hover:bg-black/5 transition-colors;
+  @apply relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors text-black;
 }
 
 .cart-badge {
-  @apply absolute -top-0.5 -right-0.5 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
+  @apply absolute top-0.5 right-0.5 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
   background: #6d28d9;
 }
 
-/* ===== Gender segmented control ===== */
+/* ===== Gender segmented control (navbar + mobile menu) ===== */
 .gender-seg {
-  @apply inline-flex items-center bg-white border border-gray-200 rounded-full p-1 mt-1 mb-2 shadow-sm;
+  @apply inline-flex items-center bg-white border border-gray-200 rounded-full p-1 shadow-sm;
 }
 .seg {
-  @apply flex items-center justify-center px-7 py-2.5 rounded-full text-gray-600 transition-colors;
+  @apply flex items-center justify-center px-5 py-1.5 rounded-full text-gray-500 transition-colors;
 }
 .seg.active {
   @apply bg-black text-white;
+}
+.mm-gender {
+  @apply w-full mb-5;
+}
+.mm-gender .seg {
+  @apply flex-1 py-2.5;
 }
 
 /* ===== Hero text ===== */
@@ -342,36 +361,26 @@ canvas {
   touch-action: none;
 }
 
-/* ---- top bar ---- */
+/* ---- top bar: back (left) + recenter (right) ---- */
 .cz-top {
-  @apply absolute top-0 left-0 w-full z-20 flex items-center justify-between px-5 sm:px-8 py-4;
+  @apply absolute top-0 left-0 w-full z-20 flex items-center justify-between px-4 sm:px-8 py-4 pointer-events-none;
 }
 .cz-back {
-  @apply flex items-center gap-2 text-sm sm:text-base font-semibold text-black;
+  @apply pointer-events-auto flex items-center gap-2 h-10 px-3.5 rounded-full bg-white/90 backdrop-blur border border-black/5 text-sm font-semibold text-black shadow-sm;
 }
 .cz-back-t {
   @apply hidden sm:inline;
 }
-.cz-top-right {
-  @apply flex items-center gap-2;
+.cz-center {
+  @apply pointer-events-auto flex items-center gap-2 h-10 px-3.5 rounded-full bg-white/90 backdrop-blur border border-black/5 text-sm font-semibold text-black shadow-sm hover:bg-white;
 }
-.cz-size {
-  @apply h-10 px-2.5 sm:px-3 rounded-full bg-white border border-black/10 text-xs sm:text-sm font-semibold text-black outline-none shadow-sm;
-}
-.cz-cart {
-  @apply relative flex items-center gap-2 h-10 px-3.5 sm:px-4 rounded-full bg-black text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors whitespace-nowrap;
-}
-.cz-cart-t {
-  @apply inline;
+.cz-center-t {
+  @apply hidden sm:inline;
 }
 
 /* ---- bottom area: view toggle + menu ---- */
 .cz-bottom {
   @apply absolute left-0 right-0 bottom-0 z-20 flex flex-col items-center gap-3 pb-0 lg:pb-6 pointer-events-none;
-}
-
-.cz-addcart-fab {
-  @apply pointer-events-auto self-end mr-4 lg:mr-8 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-black text-white text-sm font-bold shadow-lg hover:bg-gray-800 transition-colors;
 }
 
 .cz-viewtoggle {
@@ -384,10 +393,16 @@ canvas {
   @apply bg-black text-white;
 }
 
-/* rotate hint sits above the shirt, just under the top bar */
+/* rotate hint sits centered over the shirt, then fades away */
 .cz-rotate-hint {
-  @apply absolute left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 text-xs font-medium text-gray-600 bg-white/70 backdrop-blur px-3 py-1.5 rounded-full shadow-sm;
-  top: 4.25rem;
+  @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-2 text-sm font-semibold text-white bg-black/60 backdrop-blur px-4 py-2.5 rounded-full shadow-lg pointer-events-none;
+  animation: czHintFade 3.5s ease forwards;
+}
+@keyframes czHintFade {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+  14% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  72% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* the menu is a docked bar with a constant width — full width on mobile, a
@@ -407,16 +422,38 @@ canvas {
 }
 
 .cz-tabs {
-  @apply flex items-center justify-around gap-1 px-4 py-2.5 pb-4 lg:pb-2.5;
+  @apply flex items-stretch justify-around gap-1 px-3 pt-2.5;
 }
 .cz-tab {
-  @apply flex items-center justify-center;
+  @apply flex flex-col items-center gap-1;
 }
 .cz-tab-icon {
-  @apply w-10 h-10 flex items-center justify-center rounded-full text-gray-500;
+  @apply w-12 h-9 flex items-center justify-center rounded-full text-gray-500 transition-colors;
 }
 .cz-tab.active .cz-tab-icon {
   @apply bg-[#ece5d8] text-black;
+}
+.cz-tab-label {
+  @apply text-[11px] font-semibold text-gray-500;
+}
+.cz-tab.active .cz-tab-label {
+  @apply text-black;
+}
+
+/* primary add-to-cart inside the docked menu */
+.cz-addcart {
+  @apply mx-3 mt-2 mb-3 py-3.5 rounded-full bg-black text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors;
+}
+
+/* size pills (Talla tool) */
+.cz-sizes {
+  @apply flex flex-wrap gap-2;
+}
+.cz-size-pill {
+  @apply min-w-[3rem] px-3 py-2 rounded-full border border-gray-200 text-sm font-semibold text-gray-600 hover:border-black/40 transition-colors;
+}
+.cz-size-pill.active {
+  @apply bg-black text-white border-black;
 }
 
 /* ---- color swatches ---- */
@@ -589,13 +626,30 @@ input[type="file"] {
   @apply text-xs text-gray-400 hover:text-black transition-colors;
 }
 .cart-footer {
-  @apply border-t border-black/5 px-5 sm:px-8 py-4 flex flex-col gap-3;
+  @apply border-t border-black/5 px-5 sm:px-8 py-4 flex flex-col gap-2;
 }
 .cart-total {
   @apply flex items-center justify-between text-lg font-black text-black max-w-2xl w-full mx-auto;
 }
+.cart-ship {
+  @apply text-xs text-gray-400 max-w-2xl w-full mx-auto;
+}
 .cart-checkout {
-  @apply w-full max-w-2xl mx-auto py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors;
+  @apply w-full max-w-2xl mx-auto mt-1 py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors;
+}
+
+/* order confirmation */
+.cart-done {
+  @apply flex flex-col items-center justify-center gap-4 h-full text-center max-w-md mx-auto px-2;
+}
+.cart-done-check {
+  @apply w-16 h-16 flex items-center justify-center rounded-full bg-green-500 text-white text-3xl;
+}
+.cart-done-title {
+  @apply text-2xl font-black text-black;
+}
+.cart-done-text {
+  @apply text-gray-500 leading-relaxed;
 }
 
 /* ===== Mobile menu (drawer) ===== */
