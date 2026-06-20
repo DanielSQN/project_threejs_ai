@@ -52,7 +52,14 @@ canvas {
 }
 
 .home {
-  @apply absolute inset-0 z-10 flex flex-col overflow-hidden;
+  @apply absolute inset-0 z-10 flex flex-col overflow-y-auto overflow-x-hidden;
+}
+
+/* The hero is exactly the first screen; landing sections scroll below it */
+.hero-screen {
+  @apply flex flex-col shrink-0;
+  height: 100vh;
+  height: 100dvh;
 }
 
 /* ===== Hero layout (product hero, single centered column) ===== */
@@ -195,6 +202,113 @@ canvas {
 }
 
 /* =====================================================================
+   Landing sections (phase 3)
+   ===================================================================== */
+.sections {
+  @apply flex flex-col;
+}
+
+.features-section {
+  @apply border-t border-b border-black/5 bg-[#f0ece3];
+}
+
+.sec {
+  @apply px-6 sm:px-10 xl:px-20 pt-12 pb-2;
+}
+
+.sec-head {
+  @apply mb-6;
+}
+.sec-title {
+  @apply text-2xl sm:text-3xl font-black tracking-tight text-black;
+}
+.sec-sub {
+  @apply text-sm text-gray-500 mt-1;
+}
+
+/* Elige tu estilo */
+.style-grid {
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
+}
+.style-card {
+  @apply flex flex-col items-center gap-2 p-5 rounded-2xl bg-white border border-black/5 hover:shadow-md transition-shadow;
+}
+.style-tee {
+  @apply w-24 h-24 flex items-center justify-center;
+}
+.tee-svg {
+  @apply w-full h-full;
+}
+.style-label {
+  @apply text-sm font-semibold text-black;
+}
+
+/* Diseños destacados */
+.design-grid {
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
+}
+.design-card {
+  @apply flex flex-col rounded-2xl bg-white border border-black/5 overflow-hidden text-left hover:shadow-md transition-shadow;
+}
+.design-tee {
+  @apply flex items-center justify-center p-4 h-40;
+}
+.design-tee .tee-svg {
+  @apply w-28 h-28;
+}
+.design-info {
+  @apply flex flex-col gap-0.5 p-4;
+}
+.design-name {
+  @apply text-sm font-bold text-black;
+}
+.design-verse {
+  @apply text-xs text-gray-400;
+}
+.design-price {
+  @apply text-sm font-semibold text-black mt-1;
+}
+
+/* Colecciones */
+.coll-grid {
+  @apply grid grid-cols-1 sm:grid-cols-3 gap-4;
+}
+.coll-card {
+  @apply flex flex-col justify-end h-44 rounded-2xl p-5 text-left hover:shadow-md transition-shadow;
+}
+.coll-name {
+  @apply text-xl font-black text-black;
+}
+.coll-count {
+  @apply text-xs text-gray-600;
+}
+
+/* CTA final */
+.cta-final {
+  @apply flex flex-col items-center text-center gap-3 px-6 py-16 mt-8 bg-[#1c1c1c];
+}
+.cta-title {
+  @apply text-3xl sm:text-4xl font-black tracking-tight text-white;
+}
+.cta-sub {
+  @apply text-sm text-gray-300 max-w-sm;
+}
+.cta-final .btn-beige {
+  @apply mt-2;
+}
+
+/* Footer */
+.site-footer {
+  @apply flex flex-col items-center gap-1 py-8 bg-[#1c1c1c] border-t border-white/10;
+}
+.footer-brand {
+  @apply text-sm font-black tracking-widest text-white;
+}
+.footer-copy {
+  @apply text-xs text-gray-500;
+}
+
+/* =====================================================================
    Customizer (phase 2)
    ===================================================================== */
 .customizer {
@@ -243,6 +357,10 @@ canvas {
 }
 .cz-viewtoggle button.active {
   @apply bg-black text-white;
+}
+
+.cz-rotate-hint {
+  @apply flex items-center gap-2 text-xs font-medium text-gray-600 bg-white/70 backdrop-blur px-3 py-1.5 rounded-full;
 }
 
 .cz-menu {

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import state from '../store';
 import Canvas from '../canvas';
 import Navbar from '../components/Navbar';
+import Sections from '../components/Sections';
 import { headContentAnimation, headTextAnimation } from '../config/motion';
 
 const UserIcon = () => (
@@ -49,11 +50,12 @@ const Home = () => {
     state.breezeTick += 1;
   }, [gender, idx]);
 
-  // auto-advance every ~4.5s
+  // auto-advance every ~4.5s; restarts whenever the design changes (manual
+  // swipe / arrow / dot included), so a manual change resets the timer.
   useEffect(() => {
     const id = setInterval(() => setIdx((p) => (p + 1) % designs.length), 4500);
     return () => clearInterval(id);
-  }, [gender, designs.length]);
+  }, [gender, idx, designs.length]);
 
   const go = (dir) => setIdx((p) => (p + dir + designs.length) % designs.length);
   const selectGender = (g) => { setGender(g); setIdx(0); };
@@ -68,6 +70,7 @@ const Home = () => {
 
   return (
     <section className="home">
+      <div className="hero-screen">
       <Navbar />
 
       <div className="hero">
@@ -124,6 +127,9 @@ const Home = () => {
           Personalizar ahora <span aria-hidden>→</span>
         </button>
       </div>
+      </div>
+
+      <Sections />
     </section>
   )
 }
