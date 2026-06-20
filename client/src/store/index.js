@@ -18,6 +18,7 @@ const state = proxy({
   logoBackOffsetX: 0,
   logoBackOffsetY: 0,
   // home hero
+  gender: 'hombre', // 'hombre' | 'mujer' -> drives the hero catalog (shared w/ nav)
   breezeTick: 0, // bump to trigger a wind "gust" on the shirt
   // customizer
   activeView: 'front', // 'front' | 'back' -> derived from / drives shirtRotY
@@ -28,6 +29,7 @@ const state = proxy({
   cart: [], // { id, key, name, price, color, size, qty }
   cartOpen: false,
   toast: null, // last item name added (shows a confirmation)
+  order: null, // { count, total } once an order is placed -> confirmation screen
 });
 
 export const cartCount = (cart = state.cart) => cart.reduce((sum, i) => sum + i.qty, 0);
@@ -64,6 +66,19 @@ export const removeFromCart = (id) => {
 export const setCartQty = (id, qty) => {
   const item = state.cart.find((i) => i.id === id);
   if (item) item.qty = Math.max(1, qty);
+};
+
+export const cartTotal = (cart = state.cart) => cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+export const checkout = () => {
+  if (state.cart.length === 0) return;
+  state.order = { count: cartCount(), total: cartTotal() };
+  state.cart = [];
+};
+
+export const dismissOrder = () => {
+  state.order = null;
+  state.cartOpen = false;
 };
 
 export default state;

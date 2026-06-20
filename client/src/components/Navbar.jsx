@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import state, { cartCount } from '../store';
 
 const links = [
-  { label: 'Hombre', target: 'top' },
-  { label: 'Mujer', target: 'top' },
+  { label: 'Hombre', target: 'top', gender: 'hombre' },
+  { label: 'Mujer', target: 'top', gender: 'mujer' },
   { label: 'Diseños', target: 'disenos' },
   { label: 'Colecciones', target: 'colecciones' },
   { label: 'Cómo funciona', target: 'beneficios' },
 ];
 
-const goTo = (target) => {
+const goTo = ({ target, gender }) => {
+  if (gender) state.gender = gender; // switch the hero catalog
   if (target === 'top') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
@@ -55,15 +56,23 @@ const Navbar = () => {
   const count = cartCount(snap.cart);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const onLink = (target) => { goTo(target); setMenuOpen(false); };
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  const onLink = (link) => { goTo(link); setMenuOpen(false); };
+  const isActive = (link) => link.gender && link.gender === snap.gender;
 
   return (
     <nav className="navbar">
-      <img src="./brand-logo.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goTo('top')} />
+      <img src="./brand-logo.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goTo({ target: 'top' })} />
 
       <ul className="nav-links">
-        {links.map((link, i) => (
-          <li key={link.label} className={i === 0 ? 'active' : ''} onClick={() => goTo(link.target)}>{link.label}</li>
+        {links.map((link) => (
+          <li key={link.label} className={isActive(link) ? 'active' : ''} onClick={() => goTo(link)}>{link.label}</li>
         ))}
       </ul>
 
@@ -86,7 +95,7 @@ const Navbar = () => {
             </div>
             <ul className="mm-links">
               {links.map((link) => (
-                <li key={link.label} onClick={() => onLink(link.target)}>{link.label}</li>
+                <li key={link.label} className={isActive(link) ? 'active' : ''} onClick={() => onLink(link)}>{link.label}</li>
               ))}
             </ul>
             <div className="mm-actions">

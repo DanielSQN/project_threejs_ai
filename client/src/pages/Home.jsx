@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useSnapshot } from 'valtio';
 import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
 import state from '../store';
@@ -33,14 +34,18 @@ const CATALOG = {
 };
 
 const Home = () => {
-  const [gender, setGender] = useState('hombre');
+  const snap = useSnapshot(state);
+  const gender = snap.gender; // shared with the navbar so its links switch the catalog
   const [idx, setIdx] = useState(0);
   const touchX = useRef(null);
   const designs = CATALOG[gender];
 
+  // a gender change (here or from the navbar) restarts the carousel
+  useEffect(() => { setIdx(0); }, [gender]);
+
   // apply the current design to the shared 3D state + trigger a wind gust
   useEffect(() => {
-    const d = CATALOG[gender][idx];
+    const d = CATALOG[gender][idx % CATALOG[gender].length];
     state.color = d.color;
     state.logoDecal = d.logo;
     state.isLogoTexture = true;
@@ -55,7 +60,7 @@ const Home = () => {
   }, [gender, idx, designs.length]);
 
   const go = (dir) => setIdx((p) => (p + dir + designs.length) % designs.length);
-  const selectGender = (g) => { setGender(g); setIdx(0); };
+  const selectGender = (g) => { state.gender = g; };
 
   const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
   const onTouchEnd = (e) => {

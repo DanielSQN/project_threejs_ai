@@ -12,7 +12,7 @@ const Toast = () => {
     return () => clearTimeout(id);
   }, [snap.toast]);
 
-  if (!snap.toast) return null;
+  if (!snap.toast || snap.cartOpen) return null;
 
   return (
     <div className="toast">
