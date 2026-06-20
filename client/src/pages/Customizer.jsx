@@ -39,14 +39,23 @@ const Customizer = () => {
   const [activeTool, setActiveTool] = useState('view'); // collapsed by default
   const expanded = activeTool !== 'view';
 
-  // the editor is a fixed fullscreen overlay -> lock document scroll while open
+  // the editor is a fixed fullscreen overlay -> lock document scroll while open;
+  // also start facing the front.
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    state.shirtRotY = 0;
+    state.activeView = 'front';
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  const setView = (v) => { state.activeView = v; };
+  // Frente/Espalda rotate to the nearest canonical side so the buttons always
+  // match the side they name, even after a free drag.
+  const setView = (v) => {
+    const base = Math.round(state.shirtRotY / (Math.PI * 2)) * (Math.PI * 2);
+    state.shirtRotY = v === 'back' ? base + Math.PI : base;
+    state.activeView = v;
+  };
   const addToCart = () => { state.cartCount = snap.cartCount + snap.quantity; };
 
   const uploadDesign = (side, e) => {

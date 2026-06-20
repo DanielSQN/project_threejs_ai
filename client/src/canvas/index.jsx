@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Center, PresentationControls } from '@react-three/drei';
+import { useState, useRef, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Center } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
 import { easing } from 'maath';
 
@@ -10,16 +10,51 @@ import Backdrop from './Backdrop';
 import CameraRig from './CameraRig';
 import CameraZoom from './CameraZoom';
 
-// Rotates the shirt to the front or the back when the view toggle changes,
-// while PresentationControls still allows free dragging on top.
-const ViewGroup = ({ children }) => {
+// In the editor the shirt rotation is a single value (state.shirtRotY) shared by
+// both the drag and the Frente/Espalda buttons, so they never disagree.
+const RotateGroup = ({ children }) => {
   const ref = useRef();
-  const snap = useSnapshot(state);
   useFrame((_, delta) => {
-    const targetY = snap.activeView === 'back' ? Math.PI : 0;
-    easing.dampAngle(ref.current.rotation, 'y', targetY, 0.3, delta);
+    easing.dampAngle(ref.current.rotation, 'y', state.shirtRotY, 0.18, delta);
   });
   return <group ref={ref}>{children}</group>;
+};
+
+// Drag (mouse/one finger) rotates the shirt and keeps activeView (front/back)
+// in sync so the toggle highlights the side you are looking at. Two-finger
+// gestures are left to CameraZoom (pinch).
+const DragRotate = () => {
+  const { gl } = useThree();
+  useEffect(() => {
+    const el = gl.domElement;
+    const pointers = new Set();
+    let lastX = 0;
+    const down = (e) => {
+      pointers.add(e.pointerId);
+      if (pointers.size === 1) lastX = e.clientX;
+    };
+    const move = (e) => {
+      if (pointers.size !== 1 || !pointers.has(e.pointerId)) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      state.shirtRotY += dx * 0.01;
+      const n = ((state.shirtRotY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const v = n > Math.PI / 2 && n < Math.PI * 1.5 ? 'back' : 'front';
+      if (state.activeView !== v) state.activeView = v;
+    };
+    const up = (e) => { pointers.delete(e.pointerId); };
+    el.addEventListener('pointerdown', down);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    return () => {
+      el.removeEventListener('pointerdown', down);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+  }, [gl]);
+  return null;
 };
 
 const easeOut = (x) => 1 - Math.pow(1 - x, 3);
@@ -62,7 +97,6 @@ const BreezeGroup = ({ children }) => {
 
 const CanvasModel = () => {
   const snap = useSnapshot(state);
-  const [pinching, setPinching] = useState(false);
 
   return (
     <Canvas
@@ -87,28 +121,16 @@ const CanvasModel = () => {
             </Center>
           </BreezeGroup>
         ) : (
-          // Turntable: the shirt rotates on itself, camera and shadow stay put
-          <PresentationControls
-            enabled={!pinching}
-            global
-            snap={false}
-            rotation={[0, 0, 0]}
-            polar={[-Math.PI / 6, Math.PI / 6]}
-            azimuth={[-Infinity, Infinity]}
-            config={{ mass: 1, tension: 500, friction: 26 }}
-          >
-            <ViewGroup>
-              <Center>
-                <Shirt />
-              </Center>
-            </ViewGroup>
-          </PresentationControls>
+          <RotateGroup>
+            <Center>
+              <Shirt />
+            </Center>
+          </RotateGroup>
         )}
       </CameraRig>
 
-      {!snap.intro && (
-        <CameraZoom enabled={!snap.intro} onPinchChange={setPinching} />
-      )}
+      {!snap.intro && <DragRotate />}
+      {!snap.intro && <CameraZoom enabled={!snap.intro} />}
     </Canvas>
   )
 }
