@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
 import state from '../store';
 import Canvas from '../canvas';
@@ -7,20 +8,8 @@ import Navbar from '../components/Navbar';
 import Sections from '../components/Sections';
 import { headContentAnimation, headTextAnimation } from '../config/motion';
 
-const ManIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="6" r="3.5" />
-    <path d="M6 21v-3a6 6 0 0 1 12 0v3" />
-  </svg>
-);
-
-const WomanIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="5.5" r="3" />
-    <path d="M12 8.5 8.5 18h7L12 8.5Z" />
-    <path d="M9.5 14h5" />
-  </svg>
-);
+const ManIcon = () => <IoIosMan size={22} />;
+const WomanIcon = () => <IoIosWoman size={22} />;
 
 const Chevron = ({ dir }) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

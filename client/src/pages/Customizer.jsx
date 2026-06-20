@@ -116,6 +116,11 @@ const Customizer = () => {
       );
     }
     if (activeTool === 'design') {
+      const side = snap.activeView; // adjust the side you are looking at
+      const sideActive = side === 'back' ? snap.isLogoBack : snap.isLogoTexture;
+      const k = side === 'back'
+        ? { scale: 'logoBackScale', x: 'logoBackOffsetX', y: 'logoBackOffsetY' }
+        : { scale: 'logoScale', x: 'logoOffsetX', y: 'logoOffsetY' };
       return (
         <>
           <p className="cz-menu-title">Diseño de la prenda</p>
@@ -123,6 +128,26 @@ const Customizer = () => {
             <DesignCol side="front" label="Frontal" decal={snap.logoDecal} active={snap.isLogoTexture} />
             <DesignCol side="back" label="Espalda" decal={snap.logoDecalBack} active={snap.isLogoBack} />
           </div>
+          {sideActive && (
+            <div className="cz-adjust">
+              <p className="cz-adjust-title">Ajustar diseño · {side === 'back' ? 'Espalda' : 'Frente'}</p>
+              <label className="cz-slider">
+                <span>Tamaño</span>
+                <input type="range" min="0.5" max="2" step="0.01" value={snap[k.scale]}
+                  onChange={(e) => (state[k.scale] = parseFloat(e.target.value))} />
+              </label>
+              <label className="cz-slider">
+                <span>Horizontal</span>
+                <input type="range" min="-0.08" max="0.08" step="0.005" value={snap[k.x]}
+                  onChange={(e) => (state[k.x] = parseFloat(e.target.value))} />
+              </label>
+              <label className="cz-slider">
+                <span>Vertical</span>
+                <input type="range" min="-0.12" max="0.1" step="0.005" value={snap[k.y]}
+                  onChange={(e) => (state[k.y] = parseFloat(e.target.value))} />
+              </label>
+            </div>
+          )}
         </>
       );
     }
