@@ -57,6 +57,38 @@ const DragRotate = () => {
   return null;
 };
 
+// User drag offset for the home shirt, layered on top of the auto turntable so
+// the shirt keeps spinning on its own but can also be nudged/spun by hand.
+const heroSpin = { dragY: 0 };
+
+const HomeDrag = () => {
+  const { gl } = useThree();
+  useEffect(() => {
+    const el = gl.domElement;
+    let lastX = 0;
+    let active = false;
+    const down = (e) => { active = true; lastX = e.clientX; };
+    const move = (e) => {
+      if (!active) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      heroSpin.dragY += dx * 0.01;
+    };
+    const up = () => { active = false; };
+    el.addEventListener('pointerdown', down);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    return () => {
+      el.removeEventListener('pointerdown', down);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+  }, [gl]);
+  return null;
+};
+
 const easeOut = (x) => 1 - Math.pow(1 - x, 3);
 
 // On the home the camera stays fixed and centered; this group gives the shirt:
@@ -88,9 +120,9 @@ const BreezeGroup = ({ children }) => {
     const breathe = 1 + Math.sin(t * 1.2) * 0.01 + g * 0.025;
     ref.current.scale.setScalar(entranceScale * breathe);
 
-    // slow continuous 360 turn (subtle turntable) + breeze sway + gust
+    // slow continuous 360 turn (subtle turntable) + hand drag + breeze sway + gust
     ref.current.rotation.z = Math.sin(t * 0.8) * 0.04 + Math.sin(t * 7) * 0.06 * g;
-    ref.current.rotation.y = t * 0.3 + Math.sin(t * 5) * 0.11 * g;
+    ref.current.rotation.y = t * 0.3 + heroSpin.dragY + Math.sin(t * 5) * 0.11 * g;
   });
   return <group ref={ref}>{children}</group>;
 };
@@ -129,6 +161,7 @@ const CanvasModel = () => {
         )}
       </CameraRig>
 
+      {snap.intro && <HomeDrag />}
       {!snap.intro && <DragRotate />}
       {!snap.intro && <CameraZoom enabled={!snap.intro} />}
     </Canvas>
