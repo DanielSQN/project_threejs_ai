@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import state from '../store';
 import Canvas from '../canvas';
 import Navbar from '../components/Navbar';
+import Sections from '../components/Sections';
 import { headContentAnimation, headTextAnimation } from '../config/motion';
 
 const UserIcon = () => (
@@ -69,6 +70,7 @@ const Home = () => {
 
   return (
     <section className="home">
+      <div className="hero-screen">
       <Navbar />
 
       <div className="hero">
@@ -125,6 +127,9 @@ const Home = () => {
           Personalizar ahora <span aria-hidden>→</span>
         </button>
       </div>
+      </div>
+
+      <Sections />
     </section>
   )
 }
