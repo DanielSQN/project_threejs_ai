@@ -15,7 +15,7 @@ const state = proxy({
   activeView: 'front', // 'front' | 'back' -> rotates the shirt
   size: 'M',
   quantity: 1,
-  cartCount: 2,
+  cartCount: 0,
 });
 
 export default state;

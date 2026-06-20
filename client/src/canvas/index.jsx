@@ -46,16 +46,16 @@ const BreezeGroup = ({ children }) => {
     const t = st.clock.elapsedTime;
     const g = gust.current;
 
-    // entrance: small + offset -> full + centered
-    ref.current.position.x = (1 - e) * 0.22;
-    ref.current.position.y = (1 - e) * 0.18;
+    // entrance: small + offset -> full + centered, then a continuous gentle drift
+    ref.current.position.x = (1 - e) * 0.22 + e * Math.sin(t * 0.6) * 0.03;
+    ref.current.position.y = (1 - e) * 0.18 + e * Math.sin(t * 0.9) * 0.02;
     const entranceScale = 0.6 + 0.4 * e;
-    const breathe = 1 + Math.sin(t * 1.2) * 0.008 + g * 0.02;
+    const breathe = 1 + Math.sin(t * 1.2) * 0.01 + g * 0.025;
     ref.current.scale.setScalar(entranceScale * breathe);
 
-    // breeze + gust
-    ref.current.rotation.z = Math.sin(t * 0.8) * 0.03 + Math.sin(t * 7) * 0.05 * g;
-    ref.current.rotation.y = Math.sin(t * 0.5) * 0.05 + Math.sin(t * 5) * 0.09 * g;
+    // breeze + gust (a touch stronger for more life)
+    ref.current.rotation.z = Math.sin(t * 0.8) * 0.05 + Math.sin(t * 7) * 0.06 * g;
+    ref.current.rotation.y = Math.sin(t * 0.5) * 0.1 + Math.sin(t * 5) * 0.11 * g;
   });
   return <group ref={ref}>{children}</group>;
 };

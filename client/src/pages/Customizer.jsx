@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 
 import state from '../store';
@@ -38,6 +38,13 @@ const Customizer = () => {
   const snap = useSnapshot(state);
   const [activeTool, setActiveTool] = useState('view'); // collapsed by default
   const expanded = activeTool !== 'view';
+
+  // the editor is a fixed fullscreen overlay -> lock document scroll while open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   const setView = (v) => { state.activeView = v; };
   const addToCart = () => { state.cartCount = snap.cartCount + snap.quantity; };
@@ -124,7 +131,7 @@ const Customizer = () => {
           </select>
           <button className="cz-cart" onClick={addToCart}>
             {I.bag} <span className="cz-cart-t">Agregar al carrito</span>
-            <span className="cart-badge">{snap.cartCount}</span>
+            {snap.cartCount > 0 && <span className="cart-badge">{snap.cartCount}</span>}
           </button>
         </div>
       </header>
