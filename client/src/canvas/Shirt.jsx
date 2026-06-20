@@ -6,6 +6,10 @@ import { Decal, useGLTF, useTexture } from '@react-three/drei';
 
 import state from '../store';
 
+// Warm the cache for every print the hero cycles through, so swapping the
+// design is instant and the shirt never blanks out while a texture loads.
+['./brand-logo.png', './threejs.png', './react.png'].forEach((src) => useTexture.preload(src));
+
 const Shirt = () => {
   const snap = useSnapshot(state);
   const { nodes, materials } = useGLTF('/shirt_baked.glb');
@@ -16,10 +20,10 @@ const Shirt = () => {
 
   useFrame((state, delta) => easing.dampC(materials.lambert1.color, snap.color, 0.25, delta));
 
-  // Only remount when a texture/visibility actually changes (so the decals
-  // re-project); colour and transform changes update reactively without a
-  // remount, which keeps the sliders smooth.
-  const key = `${snap.logoDecal}|${snap.logoDecalBack}|${snap.fullDecal}|${snap.isLogoTexture ? 1 : 0}${snap.isLogoBack ? 1 : 0}${snap.isFullTexture ? 1 : 0}`;
+  // Remount only when a decal is toggled on/off (its child appears/disappears
+  // and must re-project). Swapping the print image just updates the Decal's map
+  // reactively — no remount, so the shirt never disappears and reloads.
+  const key = `${snap.isLogoTexture ? 1 : 0}${snap.isLogoBack ? 1 : 0}${snap.isFullTexture ? 1 : 0}`;
 
   return (
     <group key={key}>
