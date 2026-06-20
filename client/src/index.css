@@ -139,7 +139,7 @@ canvas {
   @apply inline-flex items-center bg-white border border-gray-200 rounded-full p-1 mt-1 mb-2 shadow-sm;
 }
 .seg {
-  @apply flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold text-gray-700 transition-colors;
+  @apply flex items-center justify-center px-7 py-2.5 rounded-full text-gray-600 transition-colors;
 }
 .seg.active {
   @apply bg-black text-white;
@@ -381,12 +381,18 @@ canvas {
   @apply bg-black text-white;
 }
 
+/* rotate hint sits above the shirt, just under the top bar */
 .cz-rotate-hint {
-  @apply flex items-center gap-2 text-xs font-medium text-gray-600 bg-white/70 backdrop-blur px-3 py-1.5 rounded-full;
+  @apply absolute left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 text-xs font-medium text-gray-600 bg-white/70 backdrop-blur px-3 py-1.5 rounded-full shadow-sm;
+  top: 4.25rem;
 }
 
+/* collapsed = a small icon-only pill; expanded = a wider card */
 .cz-menu {
-  @apply pointer-events-auto w-full lg:w-auto lg:min-w-[460px] lg:max-w-[600px] bg-white rounded-t-3xl lg:rounded-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.10)] lg:shadow-[0_10px_40px_rgba(0,0,0,0.12)] flex flex-col;
+  @apply pointer-events-auto bg-white shadow-lg flex flex-col rounded-full;
+}
+.cz-menu.expanded {
+  @apply w-full lg:w-auto lg:min-w-[440px] lg:max-w-[600px] rounded-t-3xl lg:rounded-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.10)] lg:shadow-[0_10px_40px_rgba(0,0,0,0.12)];
 }
 
 .cz-menu-panel {
@@ -397,16 +403,16 @@ canvas {
 }
 
 .cz-tabs {
-  @apply flex items-center justify-between px-3 sm:px-5 py-3 pb-5 lg:pb-3;
+  @apply flex items-center justify-center gap-1 px-2 py-1.5;
+}
+.cz-menu.expanded .cz-tabs {
+  @apply justify-between px-4 py-2 pb-4 lg:pb-2;
 }
 .cz-tab {
-  @apply flex flex-col items-center gap-1 text-[11px] font-semibold text-gray-400 px-2;
+  @apply flex items-center justify-center;
 }
 .cz-tab-icon {
-  @apply w-10 h-10 flex items-center justify-center rounded-xl text-gray-500;
-}
-.cz-tab.active {
-  @apply text-black;
+  @apply w-10 h-10 flex items-center justify-center rounded-full text-gray-500;
 }
 .cz-tab.active .cz-tab-icon {
   @apply bg-[#ece5d8] text-black;
@@ -617,4 +623,32 @@ input[type="file"] {
 }
 .mm-cart {
   @apply flex items-center justify-center gap-2 py-3 rounded-full border border-gray-300 text-sm font-semibold text-black;
+}
+
+/* ===== Toast (added to cart) ===== */
+.toast {
+  @apply fixed inset-x-0 bottom-5 z-[60] flex justify-center px-4 pointer-events-none;
+}
+.toast-card {
+  @apply pointer-events-auto flex items-center gap-3 text-white rounded-2xl px-4 py-3 shadow-2xl max-w-md w-full;
+  background: #1c1c1c;
+}
+.toast-check {
+  @apply w-7 h-7 flex items-center justify-center rounded-full text-white text-sm shrink-0;
+  background: #16a34a;
+}
+.toast-text {
+  @apply flex flex-col flex-1 min-w-0;
+}
+.toast-title {
+  @apply text-xs text-gray-300;
+}
+.toast-name {
+  @apply text-sm font-bold truncate;
+}
+.toast-link {
+  @apply text-sm font-bold underline shrink-0;
+}
+.toast-close {
+  @apply text-gray-400 hover:text-white shrink-0 text-sm;
 }

@@ -7,10 +7,18 @@ import Navbar from '../components/Navbar';
 import Sections from '../components/Sections';
 import { headContentAnimation, headTextAnimation } from '../config/motion';
 
-const UserIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
+const ManIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="6" r="3.5" />
+    <path d="M6 21v-3a6 6 0 0 1 12 0v3" />
+  </svg>
+);
+
+const WomanIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="5.5" r="3" />
+    <path d="M12 8.5 8.5 18h7L12 8.5Z" />
+    <path d="M9.5 14h5" />
   </svg>
 );
 
@@ -78,14 +86,18 @@ const Home = () => {
           <button
             className={`seg ${gender === 'hombre' ? 'active' : ''}`}
             onClick={() => selectGender('hombre')}
+            aria-label="Hombre"
+            title="Hombre"
           >
-            <UserIcon /> Hombre
+            <ManIcon />
           </button>
           <button
             className={`seg ${gender === 'mujer' ? 'active' : ''}`}
             onClick={() => selectGender('mujer')}
+            aria-label="Mujer"
+            title="Mujer"
           >
-            <UserIcon /> Mujer
+            <WomanIcon />
           </button>
         </div>
 

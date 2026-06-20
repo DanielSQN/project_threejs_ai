@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 
-import state, { addToCart, cartCount } from '../store';
+import state, { addToCart } from '../store';
 import Canvas from '../canvas';
 import { reader } from '../config/helpers';
 
@@ -57,10 +57,8 @@ const Customizer = () => {
     state.shirtRotY = v === 'back' ? base + Math.PI : base;
     state.activeView = v;
   };
-  const count = cartCount(snap.cart);
   const handleAddToCart = () => {
     addToCart({ name: 'Diseño personalizado', price: 99900, color: snap.color, size: snap.size, qty: snap.quantity });
-    state.cartOpen = true;
   };
 
   const uploadDesign = (side, e) => {
@@ -143,25 +141,21 @@ const Customizer = () => {
           <select className="cz-size" value={snap.size} onChange={(e) => (state.size = e.target.value)}>
             {SIZES.map((s) => <option key={s} value={s}>Talla {s}</option>)}
           </select>
-          <button className="cz-icon-cart" onClick={() => (state.cartOpen = true)} aria-label="Ver carrito">
-            {I.bag}
-            {count > 0 && <span className="cart-badge">{count}</span>}
+          <button className="cz-cart" onClick={handleAddToCart}>
+            {I.bagPlus} <span className="cz-cart-t">Agregar al carrito</span>
           </button>
         </div>
       </header>
 
-      {/* bottom area: front/back toggle + collapsible tool menu */}
+      {/* rotate hint above the shirt */}
+      <p className="cz-rotate-hint">{I.hand} Arrastra para rotar la prenda</p>
+
+      {/* bottom area: front/back toggle + collapsible (icon-only) tool menu */}
       <div className="cz-bottom">
         <div className="cz-viewtoggle">
           <button className={snap.activeView === 'front' ? 'active' : ''} onClick={() => setView('front')}>Frente</button>
           <button className={snap.activeView === 'back' ? 'active' : ''} onClick={() => setView('back')}>Espalda</button>
         </div>
-
-        <p className="cz-rotate-hint">{I.hand} Arrastra para rotar la prenda</p>
-
-        <button className="cz-addcart-fab" onClick={handleAddToCart}>
-          {I.bagPlus} Agregar al carrito
-        </button>
 
         <div className={`cz-menu ${expanded ? 'expanded' : ''}`}>
           {expanded && (
@@ -175,9 +169,10 @@ const Customizer = () => {
                 key={t.id}
                 className={`cz-tab ${activeTool === t.id ? 'active' : ''}`}
                 onClick={() => setActiveTool(activeTool === t.id ? 'view' : t.id)}
+                aria-label={t.label}
+                title={t.label}
               >
                 <span className="cz-tab-icon">{t.icon}</span>
-                <span>{t.label}</span>
               </button>
             ))}
           </div>
