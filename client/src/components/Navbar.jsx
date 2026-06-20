@@ -2,21 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
-import state, { cartCount } from '../store';
+import state, { cartCount, goPage, goHomeSection } from '../store';
 
 const links = [
-  { label: 'Diseños', target: 'disenos' },
-  { label: 'Colecciones', target: 'colecciones' },
-  { label: 'Cómo funciona', target: 'beneficios' },
+  { label: 'Diseños', page: 'disenos' },
+  { label: 'Colecciones', page: 'colecciones' },
+  { label: 'Cómo funciona', section: 'beneficios' },
 ];
 
-const goTo = (target) => {
-  if (target === 'top') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    return;
-  }
-  const el = document.getElementById(target);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+const navigate = (link) => {
+  if (link.page) goPage(link.page);
+  else if (link.section) goHomeSection(link.section);
 };
 
 const IconBag = () => (
@@ -59,31 +55,35 @@ const Navbar = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
-  const onLink = (target) => { goTo(target); setMenuOpen(false); };
+  const onLink = (link) => { navigate(link); setMenuOpen(false); };
 
   return (
-    <nav className="navbar">
-      <div className="nav-left">
-        <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goTo('top')} />
-        <ul className="nav-links">
-          {links.map((link) => (
-            <li key={link.label} onClick={() => goTo(link.target)}>{link.label}</li>
-          ))}
-        </ul>
-      </div>
+    <>
+      <nav className="navbar">
+        <div className="nav-left">
+          <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goPage('home')} />
+          <ul className="nav-links">
+            {links.map((link) => (
+              <li key={link.label} className={link.page && snap.page === link.page ? 'active' : ''} onClick={() => navigate(link)}>{link.label}</li>
+            ))}
+          </ul>
+        </div>
 
-      {/* gender selector lives in the navbar, centered */}
-      <GenderSeg gender={snap.gender} className="nav-gender" />
+        {/* gender selector lives in the navbar, centered */}
+        <GenderSeg gender={snap.gender} className="nav-gender" />
 
-      <div className="nav-right">
-        <button aria-label="Ver carrito" className="nav-icon-btn nav-cart" onClick={() => (state.cartOpen = true)}>
-          <IconBag />
-          {count > 0 && <span className="cart-badge">{count}</span>}
-        </button>
-        {/* menu is the right-most control */}
-        <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex" onClick={() => setMenuOpen(true)}><IconMenu /></button>
-      </div>
+        <div className="nav-right">
+          <button aria-label="Ver carrito" className="nav-icon-btn nav-cart" onClick={() => (state.cartOpen = true)}>
+            <IconBag />
+            {count > 0 && <span className="cart-badge">{count}</span>}
+          </button>
+          {/* menu is the right-most control */}
+          <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex" onClick={() => setMenuOpen(true)}><IconMenu /></button>
+        </div>
+      </nav>
 
+      {/* drawer is a sibling of the nav so the navbar's backdrop-filter does not
+          become its containing block (which made it render transparent) */}
       {menuOpen && (
         <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
           <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
@@ -97,7 +97,7 @@ const Navbar = () => {
 
             <ul className="mm-links">
               {links.map((link) => (
-                <li key={link.label} onClick={() => onLink(link.target)}>{link.label}</li>
+                <li key={link.label} onClick={() => onLink(link)}>{link.label}</li>
               ))}
               <li onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
                 Ver carrito{count > 0 ? ` (${count})` : ''}
@@ -106,7 +106,7 @@ const Navbar = () => {
           </div>
         </div>
       )}
-    </nav>
+    </>
   );
 };
 
