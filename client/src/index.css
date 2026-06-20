@@ -503,3 +503,106 @@ input[type="file"] {
 .sketch-picker > div:nth-child(3) {
   display: none !important;
 }
+
+/* =====================================================================
+   Cart (page) + editor cart icon
+   ===================================================================== */
+.cz-icon-cart {
+  @apply relative w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/10 text-black shadow-sm;
+}
+
+.cart {
+  @apply fixed inset-0 z-50 flex flex-col;
+  background: #f6f4ef;
+}
+.cart-top {
+  @apply flex items-center justify-between px-5 sm:px-8 py-4 border-b border-black/5;
+}
+.cart-top .cz-back {
+  @apply flex items-center gap-2 text-sm font-semibold text-black;
+}
+.cart-title {
+  @apply text-base font-bold text-black;
+}
+.cart-body {
+  @apply flex-1 overflow-y-auto px-5 sm:px-8 py-5;
+}
+.cart-empty {
+  @apply flex flex-col items-center justify-center gap-4 h-full text-center;
+}
+.cart-empty-text {
+  @apply text-gray-500;
+}
+.cart-list {
+  @apply flex flex-col gap-3 max-w-2xl mx-auto;
+}
+.cart-item {
+  @apply flex items-center gap-4 p-3 rounded-2xl bg-white border border-black/5;
+}
+.cart-swatch {
+  @apply w-14 h-14 rounded-xl border border-black/10 shrink-0;
+}
+.cart-item-info {
+  @apply flex flex-col flex-1 min-w-0;
+}
+.cart-item-name {
+  @apply text-sm font-bold text-black truncate;
+}
+.cart-item-meta {
+  @apply text-xs text-gray-500;
+}
+.cart-item-price {
+  @apply text-sm font-semibold text-black mt-1;
+}
+.cart-item-actions {
+  @apply flex flex-col items-end gap-2 shrink-0;
+}
+.cart-qty {
+  @apply flex items-center gap-1 border border-gray-200 rounded-full px-1;
+}
+.cart-qty button {
+  @apply w-7 h-7 flex items-center justify-center text-base font-bold text-black;
+}
+.cart-qty span {
+  @apply text-sm font-semibold w-5 text-center;
+}
+.cart-remove {
+  @apply text-xs text-gray-400 hover:text-black transition-colors;
+}
+.cart-footer {
+  @apply border-t border-black/5 px-5 sm:px-8 py-4 flex flex-col gap-3;
+}
+.cart-total {
+  @apply flex items-center justify-between text-lg font-black text-black max-w-2xl w-full mx-auto;
+}
+.cart-checkout {
+  @apply w-full max-w-2xl mx-auto py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors;
+}
+
+/* ===== Mobile menu (drawer) ===== */
+.mobile-menu {
+  @apply fixed inset-0 z-50;
+  background: rgba(0, 0, 0, 0.4);
+}
+.mobile-menu-panel {
+  @apply absolute top-0 right-0 h-full w-[80%] max-w-xs flex flex-col p-6 shadow-2xl;
+  background: #f6f4ef;
+}
+.mm-head {
+  @apply flex items-center justify-between mb-6;
+}
+.mm-close {
+  @apply w-9 h-9 flex items-center justify-center rounded-full text-black text-lg hover:bg-black/5;
+}
+.mm-links {
+  @apply flex flex-col flex-1;
+}
+.mm-links li {
+  @apply py-3.5 text-lg font-semibold text-black border-b border-black/5 cursor-pointer;
+}
+.mm-actions {
+  @apply flex flex-col gap-3 mt-4;
+}
+.mm-cart {
+  @apply flex items-center justify-center gap-2 py-3 rounded-full border border-gray-300 text-sm font-semibold text-black;
+}

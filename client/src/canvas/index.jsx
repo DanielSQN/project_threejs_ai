@@ -70,7 +70,7 @@ const BreezeGroup = ({ children }) => {
   const gust = useRef(0);
   const prevTick = useRef(state.breezeTick);
   useFrame((st, delta) => {
-    life.current = Math.min(1, life.current + delta / 1.1);
+    life.current = Math.min(1, life.current + delta / 0.6);
     const e = easeOut(life.current);
 
     if (state.breezeTick !== prevTick.current) {
