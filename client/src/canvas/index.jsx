@@ -88,9 +88,9 @@ const BreezeGroup = ({ children }) => {
     const breathe = 1 + Math.sin(t * 1.2) * 0.01 + g * 0.025;
     ref.current.scale.setScalar(entranceScale * breathe);
 
-    // breeze + gust (a touch stronger for more life)
-    ref.current.rotation.z = Math.sin(t * 0.8) * 0.05 + Math.sin(t * 7) * 0.06 * g;
-    ref.current.rotation.y = Math.sin(t * 0.5) * 0.1 + Math.sin(t * 5) * 0.11 * g;
+    // slow continuous 360 turn (subtle turntable) + breeze sway + gust
+    ref.current.rotation.z = Math.sin(t * 0.8) * 0.04 + Math.sin(t * 7) * 0.06 * g;
+    ref.current.rotation.y = t * 0.3 + Math.sin(t * 5) * 0.11 * g;
   });
   return <group ref={ref}>{children}</group>;
 };

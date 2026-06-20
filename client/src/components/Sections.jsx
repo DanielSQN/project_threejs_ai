@@ -125,19 +125,20 @@ const Sections = () => {
         </div>
         <div className="design-grid">
           {FEATURED.map((d) => (
-            <button className="design-card" key={d.name} onClick={() => openEditor(d)}>
-              <div className="design-tee">
+            <div className="design-card" key={d.name}>
+              <div className="design-tee" onClick={() => openEditor(d)}>
                 <TShirt color={d.color} />
               </div>
               <div className="design-info">
                 <span className="design-name">{d.name}</span>
                 <span className="design-verse">{d.verse}</span>
-                <div className="design-bottom">
-                  <span className="design-price">{formatPrice(d.price)}</span>
-                  <span className="design-add" onClick={(e) => addItem(e, d)} role="button" aria-label="Agregar al carrito"><BagPlusIcon /></span>
+                <span className="design-price">{formatPrice(d.price)}</span>
+                <div className="design-actions">
+                  <button className="design-personalize" onClick={() => openEditor(d)}>Personalizar</button>
+                  <button className="design-add" onClick={(e) => addItem(e, d)} aria-label="Agregar al carrito"><BagPlusIcon /></button>
                 </div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </section>
