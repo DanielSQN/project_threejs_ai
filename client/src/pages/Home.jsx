@@ -52,10 +52,10 @@ const Home = () => {
     const tick = () => {
       setIdx((p) => (p + 1) % designs.length);
       count += 1;
-      const delay = count < 4 ? 800 : 4500; // fast intro, then relaxed
+      const delay = count < 4 ? 1300 : 4500; // brisk intro (a bit slower), then relaxed
       timer = setTimeout(tick, delay);
     };
-    timer = setTimeout(tick, 600); // first change comes quickly
+    timer = setTimeout(tick, 900); // first change comes fairly quickly
     return () => clearTimeout(timer);
   }, [gender, designs.length]);
 
