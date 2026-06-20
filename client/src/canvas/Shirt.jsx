@@ -16,10 +16,13 @@ const Shirt = () => {
 
   useFrame((state, delta) => easing.dampC(materials.lambert1.color, snap.color, 0.25, delta));
 
-  const stateString = JSON.stringify(snap);
+  // Only remount when a texture/visibility actually changes (so the decals
+  // re-project); colour and transform changes update reactively without a
+  // remount, which keeps the sliders smooth.
+  const key = `${snap.logoDecal}|${snap.logoDecalBack}|${snap.fullDecal}|${snap.isLogoTexture ? 1 : 0}${snap.isLogoBack ? 1 : 0}${snap.isFullTexture ? 1 : 0}`;
 
   return (
-    <group key={stateString}>
+    <group key={key}>
       <mesh
         castShadow
         geometry={nodes.T_Shirt_male.geometry}
@@ -38,9 +41,9 @@ const Shirt = () => {
 
         {snap.isLogoTexture && (
           <Decal
-            position={[0, 0.04, 0.15]}
+            position={[snap.logoOffsetX, 0.04 + snap.logoOffsetY, 0.15]}
             rotation={[0, 0, 0]}
-            scale={0.15}
+            scale={0.15 * snap.logoScale}
             map={logoTexture}
             map-anisotropy={16}
           />
@@ -48,9 +51,9 @@ const Shirt = () => {
 
         {snap.isLogoBack && (
           <Decal
-            position={[0, 0.04, -0.15]}
+            position={[-snap.logoBackOffsetX, 0.04 + snap.logoBackOffsetY, -0.15]}
             rotation={[0, Math.PI, 0]}
-            scale={0.26}
+            scale={0.26 * snap.logoBackScale}
             map={logoBackTexture}
             map-anisotropy={16}
           />
