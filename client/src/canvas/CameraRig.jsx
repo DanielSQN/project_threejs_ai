@@ -16,7 +16,7 @@ const CameraRig = ({ children }) => {
     if (snap.intro) {
       // On the home the shirt is centered with enough margin that the breeze
       // sway/scale never crops it. The shirt itself gets the motion (breeze).
-      const targetPosition = isMobile ? [0, 0, 1.8] : [0, 0, 1.65];
+      const targetPosition = isMobile ? [0, 0, 1.65] : [0, 0, 1.5];
       easing.damp3(state.camera.position, targetPosition, 0.25, delta);
       easing.dampE(group.current.rotation, [0, 0, 0], 0.25, delta);
     } else {

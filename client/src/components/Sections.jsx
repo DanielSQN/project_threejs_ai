@@ -86,7 +86,6 @@ const Sections = () => {
   const addItem = (e, d) => {
     e.stopPropagation();
     addToCart({ name: d.name, price: d.price, color: d.color, size: 'M', qty: 1 });
-    state.cartOpen = true;
   };
 
   return (

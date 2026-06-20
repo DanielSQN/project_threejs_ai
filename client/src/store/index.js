@@ -19,6 +19,7 @@ const state = proxy({
   // cart
   cart: [], // { id, key, name, price, color, size, qty }
   cartOpen: false,
+  toast: null, // last item name added (shows a confirmation)
 });
 
 export const cartCount = (cart = state.cart) => cart.reduce((sum, i) => sum + i.qty, 0);
@@ -42,6 +43,10 @@ export const addToCart = (item) => {
       qty,
     });
   }
+  // return to the home and show a confirmation
+  state.intro = true;
+  state.cartOpen = false;
+  state.toast = item.name;
 };
 
 export const removeFromCart = (id) => {
