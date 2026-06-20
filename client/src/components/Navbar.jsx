@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
 import state, { cartCount } from '../store';
 
 const links = [
-  { label: 'Hombre', target: 'top', gender: 'hombre' },
-  { label: 'Mujer', target: 'top', gender: 'mujer' },
   { label: 'Diseños', target: 'disenos' },
   { label: 'Colecciones', target: 'colecciones' },
   { label: 'Cómo funciona', target: 'beneficios' },
 ];
 
-const goTo = ({ target, gender }) => {
-  if (gender) state.gender = gender; // switch the hero catalog
+const goTo = (target) => {
   if (target === 'top') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
@@ -20,20 +18,6 @@ const goTo = ({ target, gender }) => {
   const el = document.getElementById(target);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
-
-const IconSearch = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="7" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const IconUser = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
 
 const IconBag = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -51,6 +35,18 @@ const IconMenu = () => (
   </svg>
 );
 
+// Shared gender segmented control (lives in the navbar + the mobile menu).
+const GenderSeg = ({ gender, size = 20, className = '' }) => (
+  <div className={`gender-seg ${className}`}>
+    <button className={`seg ${gender === 'hombre' ? 'active' : ''}`} onClick={() => (state.gender = 'hombre')} aria-label="Hombre" title="Hombre">
+      <IoIosMan size={size} />
+    </button>
+    <button className={`seg ${gender === 'mujer' ? 'active' : ''}`} onClick={() => (state.gender = 'mujer')} aria-label="Mujer" title="Mujer">
+      <IoIosWoman size={size} />
+    </button>
+  </div>
+);
+
 const Navbar = () => {
   const snap = useSnapshot(state);
   const count = cartCount(snap.cart);
@@ -63,49 +59,50 @@ const Navbar = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
-  const onLink = (link) => { goTo(link); setMenuOpen(false); };
-  const isActive = (link) => link.gender && link.gender === snap.gender;
+  const onLink = (target) => { goTo(target); setMenuOpen(false); };
 
   return (
     <nav className="navbar">
-      <img src="./brand-logo.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goTo({ target: 'top' })} />
+      <div className="nav-left">
+        <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goTo('top')} />
+        <ul className="nav-links">
+          {links.map((link) => (
+            <li key={link.label} onClick={() => goTo(link.target)}>{link.label}</li>
+          ))}
+        </ul>
+      </div>
 
-      <ul className="nav-links">
-        {links.map((link) => (
-          <li key={link.label} className={isActive(link) ? 'active' : ''} onClick={() => goTo(link)}>{link.label}</li>
-        ))}
-      </ul>
+      {/* gender selector lives in the navbar, centered */}
+      <GenderSeg gender={snap.gender} className="nav-gender" />
 
-      <div className="nav-icons">
-        <button aria-label="Buscar" className="nav-icon-btn lg:inline-flex hidden"><IconSearch /></button>
-        <button aria-label="Cuenta" className="nav-icon-btn lg:inline-flex hidden"><IconUser /></button>
-        <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex" onClick={() => setMenuOpen(true)}><IconMenu /></button>
-        <button aria-label="Ver carrito" className="nav-icon-btn nav-cart inline-flex" onClick={() => (state.cartOpen = true)}>
+      <div className="nav-right">
+        <button aria-label="Ver carrito" className="nav-icon-btn nav-cart" onClick={() => (state.cartOpen = true)}>
           <IconBag />
           {count > 0 && <span className="cart-badge">{count}</span>}
         </button>
+        {/* menu is the right-most control */}
+        <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex" onClick={() => setMenuOpen(true)}><IconMenu /></button>
       </div>
 
       {menuOpen && (
         <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
           <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
             <div className="mm-head">
-              <img src="./brand-logo.png" alt="Viste tu fe" className="h-9 w-auto object-contain" />
+              <img src="./brand-icon.png" alt="Viste tu fe" className="h-9 w-auto object-contain" />
               <button className="mm-close" onClick={() => setMenuOpen(false)} aria-label="Cerrar">✕</button>
             </div>
+
+            {/* gender selector at the top of the menu */}
+            <GenderSeg gender={snap.gender} size={22} className="mm-gender" />
+
             <ul className="mm-links">
               {links.map((link) => (
-                <li key={link.label} className={isActive(link) ? 'active' : ''} onClick={() => onLink(link)}>{link.label}</li>
+                <li key={link.label} onClick={() => onLink(link.target)}>{link.label}</li>
               ))}
+              <li onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
+                Ver carrito{count > 0 ? ` (${count})` : ''}
+              </li>
             </ul>
-            <div className="mm-actions">
-              <button className="mm-cart" onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
-                <IconBag /> Ver carrito{count > 0 ? ` (${count})` : ''}
-              </button>
-              <button className="btn-beige w-full justify-center" onClick={() => { state.intro = false; setMenuOpen(false); }}>
-                Personalizar ahora <span aria-hidden>→</span>
-              </button>
-            </div>
           </div>
         </div>
       )}

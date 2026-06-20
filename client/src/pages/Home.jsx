@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSnapshot } from 'valtio';
-import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
 import state from '../store';
 import Canvas from '../canvas';
 import Navbar from '../components/Navbar';
 import Sections from '../components/Sections';
-import { headContentAnimation, headTextAnimation } from '../config/motion';
-
-const ManIcon = () => <IoIosMan size={22} />;
-const WomanIcon = () => <IoIosWoman size={22} />;
 
 const Chevron = ({ dir }) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -18,29 +13,31 @@ const Chevron = ({ dir }) => (
   </svg>
 );
 
-// Each design keeps the same base shirt but changes color + front print + verse.
+// Each design keeps the same base shirt but changes color + front print.
+// Lead each catalog with a high-contrast design so the hero shirt reads clearly
+// against the beige background (a beige shirt would blend in).
 const CATALOG = {
   hombre: [
-    { color: '#D8CFBE', logo: './brand-logo.png', name: 'La Visión' },
+    { color: '#1c1c1c', logo: './brand-logo.png', name: 'La Visión' },
     { color: '#2B3A55', logo: './threejs.png', name: 'Fe Inquebrantable' },
-    { color: '#1c1c1c', logo: './react.png', name: 'Provisión' },
-    { color: '#6E7B6B', logo: './brand-logo.png', name: 'Esperanza' },
+    { color: '#6E7B6B', logo: './react.png', name: 'Provisión' },
+    { color: '#D8CFBE', logo: './brand-logo.png', name: 'Esperanza' },
   ],
   mujer: [
-    { color: '#F3F1EA', logo: './brand-logo.png', name: 'Gracia' },
+    { color: '#2B3A55', logo: './brand-logo.png', name: 'Gracia' },
     { color: '#A98B6A', logo: './threejs.png', name: 'Luz del Mundo' },
-    { color: '#B7B7B2', logo: './react.png', name: 'Fe' },
+    { color: '#F3F1EA', logo: './react.png', name: 'Fe' },
   ],
 };
 
 const Home = () => {
   const snap = useSnapshot(state);
-  const gender = snap.gender; // shared with the navbar so its links switch the catalog
+  const gender = snap.gender; // shared with the navbar so its selector switches the catalog
   const [idx, setIdx] = useState(0);
   const touchX = useRef(null);
   const designs = CATALOG[gender];
 
-  // a gender change (here or from the navbar) restarts the carousel
+  // a gender change (from the navbar) restarts the carousel
   useEffect(() => { setIdx(0); }, [gender]);
 
   // apply the current design to the shared 3D state + trigger a wind gust
@@ -60,7 +57,6 @@ const Home = () => {
   }, [gender, idx, designs.length]);
 
   const go = (dir) => setIdx((p) => (p + dir + designs.length) % designs.length);
-  const selectGender = (g) => { state.gender = g; };
 
   const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
   const onTouchEnd = (e) => {
@@ -72,82 +68,55 @@ const Home = () => {
 
   return (
     <section className="home">
-      <div className="hero-screen">
       <Navbar />
 
-      <div className="hero">
-        <div className="gender-seg">
-          <button
-            className={`seg ${gender === 'hombre' ? 'active' : ''}`}
-            onClick={() => selectGender('hombre')}
-            aria-label="Hombre"
-            title="Hombre"
+      <div className="hero-screen">
+        <div className="hero">
+          <motion.h1
+            className="head-text"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-            <ManIcon />
-          </button>
-          <button
-            className={`seg ${gender === 'mujer' ? 'active' : ''}`}
-            onClick={() => selectGender('mujer')}
-            aria-label="Mujer"
-            title="Mujer"
+            VISTE TU FE.
+          </motion.h1>
+          <motion.p
+            className="hero-subtitle"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.06, ease: 'easeOut' }}
           >
-            <WomanIcon />
-          </button>
-        </div>
+            Diseños que hablan de lo que crees.
+          </motion.p>
 
-        <motion.h1
-          className="head-text"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
-          VISTE TU FE.
-        </motion.h1>
-        <motion.p
-          className="hero-subtitle"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.06, ease: 'easeOut' }}
-        >
-          Diseños que hablan de lo que crees.
-        </motion.p>
-
-        <div className="hero-stage">
-          <button className="hero-arrow left" onClick={() => go(-1)} aria-label="Anterior"><Chevron dir="left" /></button>
-          <div
-            className="hero-canvasbox"
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            <Canvas />
+          <div className="hero-stage">
+            <button className="hero-arrow left" onClick={() => go(-1)} aria-label="Anterior"><Chevron dir="left" /></button>
+            <div className="hero-canvasbox" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              <Canvas />
+            </div>
+            <button className="hero-arrow right" onClick={() => go(1)} aria-label="Siguiente"><Chevron dir="right" /></button>
           </div>
-          <button className="hero-arrow right" onClick={() => go(1)} aria-label="Siguiente"><Chevron dir="right" /></button>
+
+          <div className="hero-dots">
+            {designs.map((_, i) => (
+              <button
+                key={i}
+                className={`dot ${i === idx ? 'active' : ''}`}
+                onClick={() => setIdx(i)}
+                aria-label={`Diseño ${i + 1}`}
+              />
+            ))}
+          </div>
+
+          <button className="btn-beige" onClick={() => (state.intro = false)}>
+            Personalizar ahora <span aria-hidden>→</span>
+          </button>
         </div>
-
-        <div className="hero-dots">
-          {designs.map((_, i) => (
-            <button
-              key={i}
-              className={`dot ${i === idx ? 'active' : ''}`}
-              onClick={() => setIdx(i)}
-              aria-label={`Diseño ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        <p className="hero-desc">
-          Personaliza colores, estampados y versículos en tiempo real.
-        </p>
-
-        <button className="btn-beige" onClick={() => (state.intro = false)}>
-          Personalizar ahora <span aria-hidden>→</span>
-        </button>
-      </div>
       </div>
 
       <Sections />
     </section>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
