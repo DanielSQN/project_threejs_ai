@@ -16,7 +16,7 @@ const openEditor = (d = {}) => {
   if (d.color) state.color = d.color;
   if (d.logo) { state.logoDecal = d.logo; state.isLogoTexture = true; }
   state.activeView = 'front';
-  state.page = 'home';
+  // keep state.page so "Volver" returns to the section page you came from
   state.intro = false;
 };
 
