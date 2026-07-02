@@ -767,20 +767,42 @@ input[type="file"] {
   @apply text-gray-400 hover:text-white shrink-0 text-sm;
 }
 
-/* ===== Design adjust sliders (editor) ===== */
-.cz-adjust {
-  @apply mt-4 pt-3 border-t border-black/5 flex flex-col gap-2.5;
+/* ===== Design position pad — the draggable "matrix" (editor) ===== */
+.cz-padwrap {
+  @apply mt-4 pt-3 border-t border-black/5;
 }
 .cz-adjust-title {
-  @apply text-xs font-bold text-black;
+  @apply text-xs font-bold text-black mb-2;
 }
-.cz-slider {
-  @apply flex items-center gap-3 text-xs font-medium text-gray-600;
+.cz-pad {
+  @apply relative mx-auto rounded-xl border border-gray-300 bg-[#f6f4ef] cursor-crosshair select-none;
+  width: 10rem;
+  height: 12rem;
+  touch-action: none;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+  background-size: 20% 20%;
 }
-.cz-slider > span {
-  @apply w-20 shrink-0;
+.cz-pad-dot {
+  @apply absolute w-5 h-5 rounded-full bg-black border-2 border-white shadow-md pointer-events-none;
+  transform: translate(-50%, -50%);
 }
-.cz-slider input[type="range"] {
-  @apply flex-1 h-1.5 rounded-full appearance-none bg-gray-200;
-  accent-color: #1c1c1c;
+.cz-pad-row {
+  @apply flex items-center justify-between gap-3 mt-3;
+}
+.cz-pad-label {
+  @apply text-xs font-semibold text-gray-600;
+}
+.cz-stepper {
+  @apply flex items-center gap-1 border border-gray-200 rounded-full px-1.5 py-0.5;
+}
+.cz-stepper button {
+  @apply w-7 h-7 flex items-center justify-center rounded-full text-base font-bold text-black hover:bg-black/5;
+}
+.cz-stepper span {
+  @apply text-xs font-semibold w-10 text-center;
+}
+.cz-pad-reset {
+  @apply text-xs font-semibold text-gray-400 hover:text-black transition-colors;
 }
