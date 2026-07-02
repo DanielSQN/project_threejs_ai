@@ -65,13 +65,21 @@ const Home = () => {
 
       <div className="hero-screen">
         <div className="hero">
+          <motion.p
+            className="hero-eyebrow"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            Si Dios te dio la visión
+          </motion.p>
           <motion.h1
             className="head-text"
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-            VISTE TU FE.
+            VISTE TU <em>fe.</em>
           </motion.h1>
           <motion.p
             className="hero-subtitle"

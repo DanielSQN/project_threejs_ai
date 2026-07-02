@@ -16,6 +16,7 @@ const I = {
   view: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>,
   size: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2" /><path d="M7 4v6M17 4v6M12 4v3" /><rect x="3" y="12" width="18" height="8" rx="1.5" /></svg>,
   hand: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2" /><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2" /><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" /><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /></svg>,
+  upload: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>,
 };
 
 const COLORS = [
@@ -40,9 +41,10 @@ const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 // print offset ranges on the shirt (same for front/back)
 const PAD = { x: 0.08, yMin: -0.12, yMax: 0.1 };
 
-// A small draggable "matrix": drag the dot inside the grid and the print moves
-// to that spot on the shirt (live). Top-level component so re-renders while
-// dragging never remount it (which would drop the pointer capture).
+// A full-width draggable "matrix": the uploaded design itself shows inside the
+// grid — drag it and the print moves to that spot on the shirt (live), for the
+// side you are viewing. Top-level component so re-renders while dragging never
+// remount it (which would drop the pointer capture).
 const DesignPad = ({ side }) => {
   const snap = useSnapshot(state);
   const ref = useRef(null);
@@ -50,6 +52,7 @@ const DesignPad = ({ side }) => {
   const k = side === 'back'
     ? { scale: 'logoBackScale', x: 'logoBackOffsetX', y: 'logoBackOffsetY' }
     : { scale: 'logoScale', x: 'logoOffsetX', y: 'logoOffsetY' };
+  const decal = side === 'back' ? snap.logoDecalBack : snap.logoDecal;
 
   const place = (e) => {
     const r = ref.current.getBoundingClientRect();
@@ -75,7 +78,16 @@ const DesignPad = ({ side }) => {
         onPointerUp={() => { dragging.current = false; }}
         onPointerCancel={() => { dragging.current = false; }}
       >
-        <span className="cz-pad-dot" style={{ left: `${left}%`, top: `${top}%` }} />
+        <span className="cz-pad-cross-h" aria-hidden />
+        <span className="cz-pad-cross-v" aria-hidden />
+        {/* the design itself is the handle: see where and how big it goes */}
+        <img
+          src={decal}
+          alt=""
+          draggable={false}
+          className="cz-pad-img"
+          style={{ left: `${left}%`, top: `${top}%`, width: `${24 * snap[k.scale]}%` }}
+        />
       </div>
       <div className="cz-pad-row">
         <span className="cz-pad-label">Tamaño</span>
@@ -129,6 +141,7 @@ const Customizer = () => {
     reader(file).then((result) => {
       if (side === 'back') { state.logoDecalBack = result; state.isLogoBack = true; }
       else { state.logoDecal = result; state.isLogoTexture = true; }
+      setView(side); // turn the shirt to the side you just designed
     });
     e.target.value = '';
   };
@@ -137,21 +150,16 @@ const Customizer = () => {
     else state.isLogoTexture = false;
   };
 
-  const DesignCol = ({ side, label, decal, active }) => {
+  // plain upload buttons (the preview lives inside the position matrix)
+  const UploadPill = ({ side, label, active }) => {
     const id = `cz-file-${side}`;
     return (
-      <div className="cz-dcol">
-        <p className="cz-dcol-label">{label}</p>
-        {active ? (
-          <div className="cz-preview">
-            <img src={decal} alt={label} />
-            <button className="cz-preview-x" onClick={() => removeDesign(side)} aria-label="Eliminar">×</button>
-          </div>
-        ) : (
-          <label htmlFor={id} className="cz-preview cz-preview-empty">
-            <span>＋</span>
-            <span className="cz-preview-hint">Subir</span>
-          </label>
+      <div className="cz-upill-wrap">
+        <label htmlFor={id} className={`cz-upill ${active ? 'active' : ''}`}>
+          {I.upload} {active ? `Cambiar ${label}` : `Subir ${label}`}
+        </label>
+        {active && (
+          <button className="cz-upill-x" onClick={() => removeDesign(side)} aria-label={`Quitar ${label}`}>×</button>
         )}
         <input id={id} type="file" accept="image/*" hidden onChange={(e) => uploadDesign(side, e)} />
       </div>
@@ -201,9 +209,9 @@ const Customizer = () => {
       return (
         <>
           <p className="cz-menu-title">Diseño de la prenda</p>
-          <div className="cz-dcols">
-            <DesignCol side="front" label="Frontal" decal={snap.logoDecal} active={snap.isLogoTexture} />
-            <DesignCol side="back" label="Espalda" decal={snap.logoDecalBack} active={snap.isLogoBack} />
+          <div className="cz-upills">
+            <UploadPill side="front" label="frente" active={snap.isLogoTexture} />
+            <UploadPill side="back" label="espalda" active={snap.isLogoBack} />
           </div>
           {sideActive && <DesignPad side={side} />}
         </>

@@ -30,6 +30,18 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* subtle film grain over everything — kills the "flat template" feel */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
 /* the document scrolls naturally so mobile pull-to-refresh works */
 .app {
   @apply relative w-full;
@@ -63,6 +75,10 @@ canvas {
   @apply flex flex-col shrink-0;
   height: 100vh;
   height: 100svh;
+  /* warm editorial glow behind the shirt */
+  background:
+    radial-gradient(42rem 30rem at 82% -12%, rgba(205, 191, 163, 0.5), transparent 62%),
+    radial-gradient(36rem 26rem at 4% 12%, rgba(43, 58, 85, 0.07), transparent 60%);
 }
 
 /* ===== Hero layout (product hero, single centered column) ===== */
@@ -76,6 +92,29 @@ canvas {
 
 .head-text {
   @apply text-[2.1rem] sm:text-[3rem] lg:text-[4.25rem] xl:text-[5rem] leading-none font-black tracking-tight text-black mt-1 whitespace-nowrap;
+}
+
+/* serif-italic accent — the typographic signature of the brand */
+.head-text em,
+.sec-title em,
+.cta-title em,
+.page-title em {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 500;
+  color: #a8906a;
+  letter-spacing: -0.01em;
+}
+
+/* brand eyebrow above the hero title */
+.hero-eyebrow {
+  @apply flex items-center gap-3 text-[10px] font-bold uppercase text-gray-500 mt-2;
+  letter-spacing: 0.26em;
+}
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+  content: "";
+  @apply h-px w-8 bg-black/20;
 }
 
 /* Stage holds the shirt + side arrows; grows to fill the leftover space so
@@ -119,9 +158,9 @@ canvas {
 /* ===== Navbar (fixed, translucent) ===== */
 .navbar {
   @apply fixed top-0 left-0 w-full z-50 flex items-center justify-between xl:px-20 sm:px-10 px-4 py-3;
-  background: rgba(246, 244, 239, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(246, 244, 239, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -218,13 +257,39 @@ canvas {
   @apply bg-black;
 }
 
-/* ===== Features row ===== */
+/* ===== Brand marquee (hero → content separator) ===== */
+.marquee {
+  @apply w-full overflow-hidden bg-[#1c1c1c];
+}
+.marquee-track {
+  @apply flex items-center;
+  width: max-content;
+  animation: marqueeScroll 26s linear infinite;
+}
+.marquee-track span {
+  @apply flex items-center gap-4 px-4 py-2.5 text-[10px] font-bold uppercase whitespace-nowrap;
+  letter-spacing: 0.24em;
+  color: #e6dcc4;
+}
+.marquee-track span i {
+  @apply not-italic;
+  color: #a8906a;
+}
+@keyframes marqueeScroll {
+  to { transform: translateX(-50%); }
+}
+
+/* ===== Features row (glass chips) ===== */
 .features {
-  @apply w-full flex items-center justify-center gap-5 sm:gap-12 px-5 py-3 border-t border-black/5;
+  @apply w-full flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 px-5 py-4 border-b border-black/5;
 }
 
 .feature {
-  @apply flex items-center gap-2.5 text-black;
+  @apply flex items-center gap-2.5 text-black px-4 py-2 rounded-full;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .feature-icon {
@@ -232,7 +297,7 @@ canvas {
 }
 
 .feature-label {
-  @apply text-[10px] sm:text-xs font-bold uppercase leading-tight whitespace-pre-line text-left;
+  @apply text-[9px] sm:text-[11px] font-bold uppercase leading-tight whitespace-pre-line text-left tracking-widest text-gray-700;
 }
 
 /* =====================================================================
@@ -247,7 +312,20 @@ canvas {
 }
 
 .sec {
-  @apply px-6 sm:px-10 xl:px-20 pt-12 pb-2;
+  @apply px-6 sm:px-10 xl:px-20 pt-14 pb-4;
+}
+
+/* numbered eyebrow + hairline = the top separation of each section */
+.sec-eyebrow {
+  @apply flex items-center gap-3 text-[10px] font-bold uppercase text-gray-400 mb-3;
+  letter-spacing: 0.24em;
+}
+.sec-eyebrow > span {
+  @apply text-black;
+}
+.sec-eyebrow::after {
+  content: "";
+  @apply h-px flex-1 bg-black/10;
 }
 
 .sec-head {
@@ -274,7 +352,11 @@ canvas {
   @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
 }
 .style-card {
-  @apply flex flex-col items-center gap-2 p-5 rounded-2xl bg-white border border-black/5 hover:shadow-md transition-shadow;
+  @apply flex flex-col items-center gap-2 p-5 rounded-2xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .style-tee {
   @apply w-24 h-24 flex items-center justify-center;
@@ -291,7 +373,11 @@ canvas {
   @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
 }
 .design-card {
-  @apply flex flex-col rounded-2xl bg-white border border-black/5 overflow-hidden text-left hover:shadow-md transition-shadow;
+  @apply flex flex-col rounded-2xl overflow-hidden text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .design-tee {
   @apply flex items-center justify-center p-4 h-40;
@@ -332,10 +418,14 @@ canvas {
   @apply grid grid-cols-1 sm:grid-cols-3 gap-4;
 }
 .coll-card {
-  @apply flex flex-col justify-end h-44 rounded-2xl p-5 text-left hover:shadow-md transition-shadow;
+  @apply flex flex-col justify-end h-44 rounded-2xl p-5 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 .coll-name {
-  @apply text-xl font-black text-black;
+  @apply text-2xl text-black;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 500;
 }
 .coll-count {
   @apply text-xs text-gray-600;
@@ -371,6 +461,9 @@ canvas {
    ===================================================================== */
 .section-page {
   @apply relative w-full min-h-screen flex flex-col;
+  background:
+    radial-gradient(40rem 26rem at 85% -6%, rgba(205, 191, 163, 0.4), transparent 60%),
+    radial-gradient(30rem 22rem at 0% 30%, rgba(43, 58, 85, 0.06), transparent 60%);
 }
 .page-body {
   @apply flex-1 flex flex-col;
@@ -398,10 +491,14 @@ canvas {
   @apply grid grid-cols-1 sm:grid-cols-3 gap-4 px-6 sm:px-10 xl:px-20 pt-6;
 }
 .page-coll-card {
-  @apply flex flex-col justify-end h-56 rounded-2xl p-6 text-left hover:shadow-md transition-shadow;
+  @apply flex flex-col justify-end h-56 rounded-2xl p-6 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 .page-coll-name {
-  @apply text-2xl font-black text-black mt-1;
+  @apply text-3xl text-black mt-1;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 500;
 }
 .page-coll-desc {
   @apply text-sm text-gray-600 mt-1 mb-2;
@@ -412,7 +509,10 @@ canvas {
    ===================================================================== */
 .customizer {
   @apply fixed inset-0 z-40 overflow-hidden;
-  background: #f6f4ef;
+  background:
+    radial-gradient(40rem 30rem at 85% -5%, rgba(205, 191, 163, 0.5), transparent 60%),
+    radial-gradient(32rem 26rem at 0% 100%, rgba(43, 58, 85, 0.08), transparent 60%),
+    #f6f4ef;
 }
 
 /* fullscreen 3D shirt */
@@ -428,13 +528,23 @@ canvas {
   @apply absolute top-0 left-0 w-full z-20 flex items-center justify-between px-4 sm:px-8 py-4 pointer-events-none;
 }
 .cz-back {
-  @apply pointer-events-auto flex items-center gap-2 h-10 px-3.5 rounded-full bg-white/90 backdrop-blur border border-black/5 text-sm font-semibold text-black shadow-sm;
+  @apply pointer-events-auto flex items-center gap-2 h-10 px-3.5 rounded-full text-sm font-semibold text-black shadow-sm;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .cz-back-t {
   @apply hidden sm:inline;
 }
 .cz-cart-top {
-  @apply pointer-events-auto flex items-center gap-2 h-10 px-4 rounded-full bg-black text-white text-sm font-bold shadow-sm hover:bg-gray-800 transition-colors whitespace-nowrap;
+  @apply pointer-events-auto flex items-center gap-2 h-10 px-4 rounded-full text-white text-sm font-bold shadow-sm transition-colors whitespace-nowrap;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.cz-cart-top:hover {
+  background: rgba(18, 18, 18, 0.95);
 }
 .cz-cart-top-t {
   @apply inline;
@@ -446,7 +556,11 @@ canvas {
 }
 
 .cz-viewtoggle {
-  @apply flex items-center gap-1 bg-white rounded-full p-1 shadow-md border border-black/5 pointer-events-auto;
+  @apply flex items-center gap-1 rounded-full p-1 shadow-md pointer-events-auto;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .cz-viewtoggle button {
   @apply px-6 py-2 rounded-full text-sm font-semibold text-gray-600 transition-colors;
@@ -467,13 +581,18 @@ canvas {
   100% { opacity: 0; }
 }
 
-/* the menu is a docked bar with a constant width — full width on mobile, a
-   fixed card on desktop — so it never shrinks/grows between the collapsed and
-   expanded states. Only the panel above the tabs appears/disappears. */
+/* the menu is a docked GLASS bar with a constant width — full width on mobile,
+   a fixed card on desktop — so it never shrinks/grows between the collapsed
+   and expanded states. Only the panel above the tabs appears/disappears; the
+   shirt shows through the translucency. */
 .cz-menu {
-  @apply pointer-events-auto bg-white flex flex-col
-         w-full rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.10)]
-         lg:w-[520px] lg:rounded-3xl lg:shadow-[0_10px_40px_rgba(0,0,0,0.12)];
+  @apply pointer-events-auto flex flex-col
+         w-full rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.08)]
+         lg:w-[520px] lg:rounded-3xl lg:shadow-[0_10px_40px_rgba(0,0,0,0.10)];
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .cz-menu-panel {
@@ -504,7 +623,11 @@ canvas {
 
 /* recenter button: floats on the right, just above the docked menu */
 .cz-recenter {
-  @apply pointer-events-auto self-end mr-4 lg:mr-8 w-11 h-11 flex items-center justify-center rounded-full bg-white text-black shadow-md border border-black/5 hover:bg-gray-50 active:scale-95 transition;
+  @apply pointer-events-auto self-end mr-4 lg:mr-8 w-11 h-11 flex items-center justify-center rounded-full text-black shadow-md active:scale-95 transition;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* size pills (Talla tool) */
@@ -529,30 +652,21 @@ canvas {
   @apply ring-2 ring-black ring-offset-2 ring-offset-white;
 }
 
-/* ---- design columns (front / back) ---- */
-.cz-dcols {
-  @apply grid grid-cols-2 gap-3;
+/* ---- design upload buttons (front / back) ---- */
+.cz-upills {
+  @apply grid grid-cols-2 gap-2;
 }
-.cz-dcol {
-  @apply flex flex-col gap-2;
+.cz-upill-wrap {
+  @apply relative;
 }
-.cz-dcol-label {
-  @apply text-xs font-semibold text-gray-600 text-center;
+.cz-upill {
+  @apply flex items-center justify-center gap-2 w-full py-2.5 pr-6 rounded-full border border-black/10 bg-white/50 text-xs font-bold text-black cursor-pointer hover:border-black/40 transition-colors whitespace-nowrap;
 }
-.cz-preview {
-  @apply relative flex items-center justify-center h-28 rounded-xl border border-gray-200 bg-[#f6f4ef] overflow-hidden;
+.cz-upill.active {
+  @apply bg-black text-white border-black;
 }
-.cz-preview img {
-  @apply max-w-[80%] max-h-[80%] object-contain;
-}
-.cz-preview-empty {
-  @apply flex flex-col items-center justify-center gap-1 border-dashed text-gray-400 cursor-pointer text-2xl;
-}
-.cz-preview-hint {
-  @apply text-xs;
-}
-.cz-preview-x {
-  @apply absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center rounded-full bg-black text-white text-base leading-none;
+.cz-upill-x {
+  @apply absolute top-1/2 right-2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-white text-black text-sm leading-none shadow-sm;
 }
 
 .cz-soon {
@@ -631,7 +745,9 @@ input[type="file"] {
 
 .cart {
   @apply fixed inset-0 z-50 flex flex-col;
-  background: #f6f4ef;
+  background: rgba(246, 244, 239, 0.9);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 .cart-top {
   @apply flex items-center justify-between px-5 sm:px-8 py-4 border-b border-black/5;
@@ -721,7 +837,10 @@ input[type="file"] {
 }
 .mobile-menu-panel {
   @apply absolute top-0 right-0 h-full w-[80%] max-w-xs flex flex-col p-6 shadow-2xl;
-  background: #f6f4ef;
+  background: rgba(246, 244, 239, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.6);
 }
 .mm-head {
   @apply flex items-center justify-between mb-6;
@@ -775,18 +894,31 @@ input[type="file"] {
   @apply text-xs font-bold text-black mb-2;
 }
 .cz-pad {
-  @apply relative mx-auto rounded-xl border border-gray-300 bg-[#f6f4ef] cursor-crosshair select-none;
-  width: 10rem;
+  @apply relative w-full rounded-xl border border-black/10 cursor-crosshair select-none overflow-hidden;
   height: 12rem;
   touch-action: none;
+  background-color: rgba(255, 255, 255, 0.35);
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
-  background-size: 20% 20%;
+    linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 2.2rem 2.2rem;
+  background-position: center;
 }
-.cz-pad-dot {
-  @apply absolute w-5 h-5 rounded-full bg-black border-2 border-white shadow-md pointer-events-none;
+.cz-pad-cross-h,
+.cz-pad-cross-v {
+  @apply absolute bg-black/10 pointer-events-none;
+}
+.cz-pad-cross-h {
+  left: 0; right: 0; top: 50%; height: 1px;
+}
+.cz-pad-cross-v {
+  top: 0; bottom: 0; left: 50%; width: 1px;
+}
+/* the uploaded design is the drag handle inside the matrix */
+.cz-pad-img {
+  @apply absolute object-contain pointer-events-none drop-shadow-md;
   transform: translate(-50%, -50%);
+  max-width: none;
 }
 .cz-pad-row {
   @apply flex items-center justify-between gap-3 mt-3;
