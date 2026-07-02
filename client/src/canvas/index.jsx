@@ -11,11 +11,19 @@ import CameraRig from './CameraRig';
 import CameraZoom from './CameraZoom';
 
 // In the editor the shirt rotation is a single value (state.shirtRotY) shared by
-// both the drag and the Frente/Espalda buttons, so they never disagree.
+// both the drag and the Frente/Espalda buttons, so they never disagree. On top
+// of that it gets a subtle idle so it looks floating / worn (as if someone has
+// it on) rather than stiff — a gentle bob + sway that never fights the drag,
+// which only owns the Y rotation.
 const RotateGroup = ({ children }) => {
   const ref = useRef();
-  useFrame((_, delta) => {
+  useFrame((st, delta) => {
     easing.dampAngle(ref.current.rotation, 'y', state.shirtRotY, 0.18, delta);
+    const t = st.clock.elapsedTime;
+    ref.current.position.y = Math.sin(t * 1.15) * 0.022;      // float up/down
+    ref.current.position.x = Math.sin(t * 0.8) * 0.012;       // drift side to side
+    ref.current.rotation.z = Math.sin(t * 0.9) * 0.028;       // gentle sway
+    ref.current.rotation.x = Math.sin(t * 0.7) * 0.02;        // subtle "walking" lean
   });
   return <group ref={ref}>{children}</group>;
 };
