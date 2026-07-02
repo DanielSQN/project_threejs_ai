@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 
 import state, { addToCart } from '../store';
@@ -36,6 +36,59 @@ const TOOLS = [
 ];
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+// print offset ranges on the shirt (same for front/back)
+const PAD = { x: 0.08, yMin: -0.12, yMax: 0.1 };
+
+// A small draggable "matrix": drag the dot inside the grid and the print moves
+// to that spot on the shirt (live). Top-level component so re-renders while
+// dragging never remount it (which would drop the pointer capture).
+const DesignPad = ({ side }) => {
+  const snap = useSnapshot(state);
+  const ref = useRef(null);
+  const dragging = useRef(false);
+  const k = side === 'back'
+    ? { scale: 'logoBackScale', x: 'logoBackOffsetX', y: 'logoBackOffsetY' }
+    : { scale: 'logoScale', x: 'logoOffsetX', y: 'logoOffsetY' };
+
+  const place = (e) => {
+    const r = ref.current.getBoundingClientRect();
+    const nx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    const ny = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    state[k.x] = -PAD.x + nx * PAD.x * 2;
+    state[k.y] = PAD.yMax - ny * (PAD.yMax - PAD.yMin);
+  };
+  const setScale = (d) => { state[k.scale] = Math.min(2, Math.max(0.5, +(snap[k.scale] + d).toFixed(2))); };
+  const reset = () => { state[k.x] = 0; state[k.y] = 0; state[k.scale] = 1; };
+
+  const left = ((snap[k.x] + PAD.x) / (PAD.x * 2)) * 100;
+  const top = ((PAD.yMax - snap[k.y]) / (PAD.yMax - PAD.yMin)) * 100;
+
+  return (
+    <div className="cz-padwrap">
+      <p className="cz-adjust-title">Posición del diseño · {side === 'back' ? 'Espalda' : 'Frente'}</p>
+      <div
+        ref={ref}
+        className="cz-pad"
+        onPointerDown={(e) => { dragging.current = true; e.currentTarget.setPointerCapture(e.pointerId); place(e); }}
+        onPointerMove={(e) => { if (dragging.current) place(e); }}
+        onPointerUp={() => { dragging.current = false; }}
+        onPointerCancel={() => { dragging.current = false; }}
+      >
+        <span className="cz-pad-dot" style={{ left: `${left}%`, top: `${top}%` }} />
+      </div>
+      <div className="cz-pad-row">
+        <span className="cz-pad-label">Tamaño</span>
+        <div className="cz-stepper">
+          <button onClick={() => setScale(-0.1)} aria-label="Reducir">−</button>
+          <span>{Math.round(snap[k.scale] * 100)}%</span>
+          <button onClick={() => setScale(0.1)} aria-label="Aumentar">+</button>
+        </div>
+        <button className="cz-pad-reset" onClick={reset}>Restablecer</button>
+      </div>
+    </div>
+  );
+};
 
 const Customizer = () => {
   const snap = useSnapshot(state);
@@ -143,6 +196,8 @@ const Customizer = () => {
       );
     }
     if (activeTool === 'design') {
+      const side = snap.activeView; // position the side you are looking at
+      const sideActive = side === 'back' ? snap.isLogoBack : snap.isLogoTexture;
       return (
         <>
           <p className="cz-menu-title">Diseño de la prenda</p>
@@ -150,6 +205,7 @@ const Customizer = () => {
             <DesignCol side="front" label="Frontal" decal={snap.logoDecal} active={snap.isLogoTexture} />
             <DesignCol side="back" label="Espalda" decal={snap.logoDecalBack} active={snap.isLogoBack} />
           </div>
+          {sideActive && <DesignPad side={side} />}
         </>
       );
     }

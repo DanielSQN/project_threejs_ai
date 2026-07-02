@@ -1,7 +1,20 @@
 import { proxy } from 'valtio';
 
+// Map a URL path to the app screen, so deep links (/disenos, /personalizar,
+// /carrito…) open directly on that screen. Used for the initial load and by
+// the history-sync hook on Back/Forward.
+export const fromPath = (path) => {
+  const p = ('/' + (path || '').replace(/^\/+|\/+$/g, '')).toLowerCase();
+  return {
+    intro: p !== '/personalizar',
+    page: p === '/disenos' ? 'disenos' : p === '/colecciones' ? 'colecciones' : 'home',
+    cartOpen: p === '/carrito',
+  };
+};
+const nav0 = fromPath(typeof window !== 'undefined' ? window.location.pathname : '/');
+
 const state = proxy({
-  intro: true,
+  intro: nav0.intro,
   color: '#D8CFBE',
   isLogoTexture: true,
   isFullTexture: false,
@@ -19,7 +32,7 @@ const state = proxy({
   logoBackOffsetY: 0,
   // home hero
   gender: 'hombre', // 'hombre' | 'mujer' -> drives the hero catalog (shared w/ nav)
-  page: 'home', // 'home' | 'disenos' | 'colecciones' -> simple section routing
+  page: nav0.page, // 'home' | 'disenos' | 'colecciones' -> simple section routing
   breezeTick: 0, // bump to trigger a wind "gust" on the shirt
   // customizer
   activeView: 'front', // 'front' | 'back' -> derived from / drives shirtRotY
@@ -28,7 +41,7 @@ const state = proxy({
   quantity: 1,
   // cart
   cart: [], // { id, key, name, price, color, size, qty }
-  cartOpen: false,
+  cartOpen: nav0.cartOpen,
   toast: null, // last item name added (shows a confirmation)
   order: null, // { count, total } once an order is placed -> confirmation screen
 });
