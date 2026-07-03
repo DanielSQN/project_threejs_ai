@@ -2,18 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
-import state, { cartCount, goPage, goHomeSection } from '../store';
+import state, { cartCount, goPage } from '../store';
 
 const links = [
   { label: 'Diseños', page: 'disenos' },
   { label: 'Colecciones', page: 'colecciones' },
-  { label: 'Cómo funciona', section: 'beneficios' },
 ];
-
-const navigate = (link) => {
-  if (link.page) goPage(link.page);
-  else if (link.section) goHomeSection(link.section);
-};
 
 const IconBag = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -31,8 +25,8 @@ const IconMenu = () => (
   </svg>
 );
 
-// Shared gender segmented control (lives in the navbar + the mobile menu).
-const GenderSeg = ({ gender, size = 20, className = '' }) => (
+// Shared gender segmented control (hero on mobile, navbar on desktop, menu).
+export const GenderSeg = ({ gender, size = 20, className = '' }) => (
   <div className={`gender-seg ${className}`}>
     <button className={`seg ${gender === 'hombre' ? 'active' : ''}`} onClick={() => (state.gender = 'hombre')} aria-label="Hombre" title="Hombre">
       <IoIosMan size={size} />
@@ -48,63 +42,67 @@ const Navbar = () => {
   const count = cartCount(snap.cart);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // the menu is a fullscreen layer: lock the page scroll behind it (iOS kept
+  // showing/scrolling the content underneath) and close with Esc
   useEffect(() => {
     if (!menuOpen) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
   }, [menuOpen]);
 
-  const onLink = (link) => { navigate(link); setMenuOpen(false); };
+  const go = (page) => { goPage(page); setMenuOpen(false); };
 
   return (
     <>
       <nav className="navbar">
-        <div className="nav-left">
-          <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img" onClick={() => goPage('home')} />
+        {/* left: menu (mobile) / logo + links (desktop) */}
+        <div className="nav-side">
+          <button aria-label="Menú" className="nav-icon-btn lg:hidden" onClick={() => setMenuOpen(true)}><IconMenu /></button>
+          <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img hidden lg:block" onClick={() => goPage('home')} />
           <ul className="nav-links">
-            {links.map((link) => (
-              <li key={link.label} className={link.page && snap.page === link.page ? 'active' : ''} onClick={() => navigate(link)}>{link.label}</li>
+            {links.map((l) => (
+              <li key={l.label} className={snap.page === l.page ? 'active' : ''} onClick={() => goPage(l.page)}>{l.label}</li>
             ))}
           </ul>
         </div>
 
-        {/* gender selector lives in the navbar, centered */}
-        <GenderSeg gender={snap.gender} className="nav-gender" />
+        {/* mobile: brand centered */}
+        <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img nav-logo-center lg:hidden" onClick={() => goPage('home')} />
 
-        <div className="nav-right">
+        {/* desktop: gender centered */}
+        <div className="nav-gender hidden lg:block"><GenderSeg gender={snap.gender} /></div>
+
+        {/* right: cart */}
+        <div className="nav-side nav-side-r">
           <button aria-label="Ver carrito" className="nav-icon-btn nav-cart" onClick={() => (state.cartOpen = true)}>
             <IconBag />
             {count > 0 && <span className="cart-badge">{count}</span>}
           </button>
-          {/* menu is the right-most control */}
-          <button aria-label="Menú" className="nav-icon-btn lg:hidden inline-flex" onClick={() => setMenuOpen(true)}><IconMenu /></button>
         </div>
       </nav>
 
-      {/* drawer is a sibling of the nav so the navbar's backdrop-filter does not
-          become its containing block (which made it render transparent) */}
+      {/* fullscreen mobile menu — its own opaque layer, nothing shows behind */}
       {menuOpen && (
-        <div className="mobile-menu" onClick={() => setMenuOpen(false)}>
-          <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="mm-head">
-              <img src="./brand-icon.png" alt="Viste tu fe" className="h-9 w-auto object-contain" />
-              <button className="mm-close" onClick={() => setMenuOpen(false)} aria-label="Cerrar">✕</button>
-            </div>
-
-            {/* gender selector at the top of the menu */}
-            <GenderSeg gender={snap.gender} size={22} className="mm-gender" />
-
-            <ul className="mm-links">
-              {links.map((link) => (
-                <li key={link.label} onClick={() => onLink(link)}>{link.label}</li>
-              ))}
-            </ul>
-
-            <button className="mm-cart" onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
-              <IconBag /> Ver carrito{count > 0 ? ` (${count})` : ''}
-            </button>
+        <div className="mobile-menu">
+          <div className="mm-head">
+            <img src="./brand-icon.png" alt="Viste tu fe" className="h-9 w-auto object-contain" />
+            <button className="mm-close" onClick={() => setMenuOpen(false)} aria-label="Cerrar">✕</button>
           </div>
+
+          <GenderSeg gender={snap.gender} size={22} className="mm-gender" />
+
+          <ul className="mm-links">
+            <li onClick={() => go('home')}><span>01</span> Inicio</li>
+            <li onClick={() => go('disenos')}><span>02</span> Diseños</li>
+            <li onClick={() => go('colecciones')}><span>03</span> Colecciones</li>
+          </ul>
+
+          <button className="mm-cart" onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
+            <IconBag /> Ver carrito{count > 0 ? ` (${count})` : ''}
+          </button>
         </div>
       )}
     </>

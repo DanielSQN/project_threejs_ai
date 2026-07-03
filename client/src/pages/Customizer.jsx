@@ -41,62 +41,107 @@ const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 // print offset ranges on the shirt (same for front/back)
 const PAD = { x: 0.08, yMin: -0.12, yMax: 0.1 };
 
-// A full-width draggable "matrix": the uploaded design itself shows inside the
-// grid — drag it and the print moves to that spot on the shirt (live), for the
-// side you are viewing. Top-level component so re-renders while dragging never
-// remount it (which would drop the pointer capture).
-const DesignPad = ({ side }) => {
+const KEYS = {
+  front: { scale: 'logoScale', x: 'logoOffsetX', y: 'logoOffsetY' },
+  back: { scale: 'logoBackScale', x: 'logoBackOffsetX', y: 'logoBackOffsetY' },
+};
+
+// Turn the shirt to the nearest canonical side so the Frente/Espalda buttons
+// (and the pad) always match the side they name, even after a free drag.
+const turnTo = (v) => {
+  const base = Math.round(state.shirtRotY / (Math.PI * 2)) * (Math.PI * 2);
+  state.shirtRotY = v === 'back' ? base + Math.PI : base;
+  state.activeView = v;
+};
+
+// One compact matrix split in two: the left half positions the FRONT print and
+// the right half the BACK print. The uploaded design itself is the handle, and
+// starting a drag turns the shirt to that side so you see the change live.
+// Top-level component so re-renders while dragging never remount it (which
+// would drop the pointer capture).
+const DesignPad = () => {
   const snap = useSnapshot(state);
   const ref = useRef(null);
-  const dragging = useRef(false);
-  const k = side === 'back'
-    ? { scale: 'logoBackScale', x: 'logoBackOffsetX', y: 'logoBackOffsetY' }
-    : { scale: 'logoScale', x: 'logoOffsetX', y: 'logoOffsetY' };
-  const decal = side === 'back' ? snap.logoDecalBack : snap.logoDecal;
+  const dragSide = useRef(null);
 
   const place = (e) => {
+    const side = dragSide.current;
+    if (!side) return;
     const r = ref.current.getBoundingClientRect();
-    const nx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    const half = r.width / 2;
+    const x0 = side === 'front' ? r.left : r.left + half;
+    const nx = Math.min(1, Math.max(0, (e.clientX - x0) / half));
     const ny = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    const k = KEYS[side];
     state[k.x] = -PAD.x + nx * PAD.x * 2;
     state[k.y] = PAD.yMax - ny * (PAD.yMax - PAD.yMin);
   };
+
+  const down = (e) => {
+    const r = ref.current.getBoundingClientRect();
+    const side = e.clientX - r.left < r.width / 2 ? 'front' : 'back';
+    const active = side === 'back' ? state.isLogoBack : state.isLogoTexture;
+    if (!active) return; // nothing to drag on that half
+    dragSide.current = side;
+    turnTo(side); // show that side while you position it
+    e.currentTarget.setPointerCapture(e.pointerId);
+    place(e);
+  };
+
+  const posFor = (side) => {
+    const k = KEYS[side];
+    const nx = (snap[k.x] + PAD.x) / (PAD.x * 2);
+    const ny = (PAD.yMax - snap[k.y]) / (PAD.yMax - PAD.yMin);
+    return {
+      left: `${(side === 'front' ? 0 : 50) + nx * 50}%`,
+      top: `${ny * 100}%`,
+      width: `${12 * snap[k.scale]}%`,
+    };
+  };
+
+  // the size control follows the side you are viewing (dragging a half flips to it)
+  const side = snap.activeView;
+  const k = KEYS[side];
+  const sideActive = side === 'back' ? snap.isLogoBack : snap.isLogoTexture;
   const setScale = (d) => { state[k.scale] = Math.min(2, Math.max(0.5, +(snap[k.scale] + d).toFixed(2))); };
   const reset = () => { state[k.x] = 0; state[k.y] = 0; state[k.scale] = 1; };
 
-  const left = ((snap[k.x] + PAD.x) / (PAD.x * 2)) * 100;
-  const top = ((PAD.yMax - snap[k.y]) / (PAD.yMax - PAD.yMin)) * 100;
-
   return (
     <div className="cz-padwrap">
-      <p className="cz-adjust-title">Posición del diseño · {side === 'back' ? 'Espalda' : 'Frente'}</p>
+      <p className="cz-adjust-title">Posición del diseño</p>
       <div
         ref={ref}
         className="cz-pad"
-        onPointerDown={(e) => { dragging.current = true; e.currentTarget.setPointerCapture(e.pointerId); place(e); }}
-        onPointerMove={(e) => { if (dragging.current) place(e); }}
-        onPointerUp={() => { dragging.current = false; }}
-        onPointerCancel={() => { dragging.current = false; }}
+        onPointerDown={down}
+        onPointerMove={(e) => { if (dragSide.current) place(e); }}
+        onPointerUp={() => { dragSide.current = null; }}
+        onPointerCancel={() => { dragSide.current = null; }}
       >
+        <span className="cz-pad-divider" aria-hidden />
         <span className="cz-pad-cross-h" aria-hidden />
-        <span className="cz-pad-cross-v" aria-hidden />
-        {/* the design itself is the handle: see where and how big it goes */}
-        <img
-          src={decal}
-          alt=""
-          draggable={false}
-          className="cz-pad-img"
-          style={{ left: `${left}%`, top: `${top}%`, width: `${24 * snap[k.scale]}%` }}
-        />
+        <span className="cz-pad-tag" style={{ left: '25%' }}>Frente</span>
+        <span className="cz-pad-tag" style={{ left: '75%' }}>Espalda</span>
+        {snap.isLogoTexture
+          ? <img src={snap.logoDecal} alt="" draggable={false} className="cz-pad-img" style={posFor('front')} />
+          : <span className="cz-pad-empty" style={{ left: '25%' }}>Sin diseño</span>}
+        {snap.isLogoBack
+          ? <img src={snap.logoDecalBack} alt="" draggable={false} className="cz-pad-img" style={posFor('back')} />
+          : <span className="cz-pad-empty" style={{ left: '75%' }}>Sin diseño</span>}
       </div>
       <div className="cz-pad-row">
-        <span className="cz-pad-label">Tamaño</span>
-        <div className="cz-stepper">
-          <button onClick={() => setScale(-0.1)} aria-label="Reducir">−</button>
-          <span>{Math.round(snap[k.scale] * 100)}%</span>
-          <button onClick={() => setScale(0.1)} aria-label="Aumentar">+</button>
-        </div>
-        <button className="cz-pad-reset" onClick={reset}>Restablecer</button>
+        <span className="cz-pad-label">Tamaño · {side === 'back' ? 'Espalda' : 'Frente'}</span>
+        {sideActive ? (
+          <>
+            <div className="cz-stepper">
+              <button onClick={() => setScale(-0.1)} aria-label="Reducir">−</button>
+              <span>{Math.round(snap[k.scale] * 100)}%</span>
+              <button onClick={() => setScale(0.1)} aria-label="Aumentar">+</button>
+            </div>
+            <button className="cz-pad-reset" onClick={reset}>Restablecer</button>
+          </>
+        ) : (
+          <span className="cz-pad-hintside">Sube un diseño para este lado</span>
+        )}
       </div>
     </div>
   );
@@ -124,13 +169,13 @@ const Customizer = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // Frente/Espalda rotate to the nearest canonical side so the buttons always
-  // match the side they name, even after a free drag.
-  const setView = (v) => {
-    const base = Math.round(state.shirtRotY / (Math.PI * 2)) * (Math.PI * 2);
-    state.shirtRotY = v === 'back' ? base + Math.PI : base;
-    state.activeView = v;
-  };
+  // while a tool panel is open the camera lifts the shirt above the panel
+  useEffect(() => {
+    state.panelOpen = expanded;
+    return () => { state.panelOpen = false; };
+  }, [expanded]);
+
+  const setView = turnTo;
   const handleAddToCart = () => {
     addToCart({ name: 'Diseño personalizado', price: 99900, color: snap.color, size: snap.size, qty: snap.quantity });
   };
@@ -204,8 +249,6 @@ const Customizer = () => {
       );
     }
     if (activeTool === 'design') {
-      const side = snap.activeView; // position the side you are looking at
-      const sideActive = side === 'back' ? snap.isLogoBack : snap.isLogoTexture;
       return (
         <>
           <p className="cz-menu-title">Diseño de la prenda</p>
@@ -213,7 +256,7 @@ const Customizer = () => {
             <UploadPill side="front" label="frente" active={snap.isLogoTexture} />
             <UploadPill side="back" label="espalda" active={snap.isLogoBack} />
           </div>
-          {sideActive && <DesignPad side={side} />}
+          {(snap.isLogoTexture || snap.isLogoBack) && <DesignPad />}
         </>
       );
     }

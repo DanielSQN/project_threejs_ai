@@ -4,7 +4,7 @@ import { useSnapshot } from 'valtio';
 
 import state from '../store';
 import Canvas from '../canvas';
-import Navbar from '../components/Navbar';
+import Navbar, { GenderSeg } from '../components/Navbar';
 import Sections from '../components/Sections';
 
 // Each design keeps the same base shirt but changes color + front print.
@@ -65,6 +65,15 @@ const Home = () => {
 
       <div className="hero-screen">
         <div className="hero">
+          {/* on mobile the gender selector lives in the hero (navbar stays clean) */}
+          <motion.div
+            className="hero-gender lg:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <GenderSeg gender={gender} />
+          </motion.div>
           <motion.p
             className="hero-eyebrow"
             initial={{ opacity: 0 }}
@@ -104,7 +113,7 @@ const Home = () => {
         {/* mobile-only "scroll for more" hint */}
         <button
           className="hero-scroll-hint lg:hidden"
-          onClick={() => document.getElementById('beneficios')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('estilo')?.scrollIntoView({ behavior: 'smooth' })}
           aria-label="Desliza para ver más"
         >
           <span>Desliza para ver más</span>

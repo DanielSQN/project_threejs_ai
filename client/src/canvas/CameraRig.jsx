@@ -22,9 +22,11 @@ const CameraRig = ({ children }) => {
     } else {
       // Customizer: pulled back so the sleeves stay on screen. CameraZoom owns
       // the zoom factor and writes a pan offset (zoom-to-cursor) that we add to
-      // the centered target here.
+      // the centered target here. When a tool panel is open the camera drops a
+      // little so the shirt lifts above the panel and you see the change live.
+      const lift = snap.panelOpen ? (isMobile ? 0.3 : 0.2) : 0;
       const baseZ = isMobile ? 2.55 : 2.7;
-      const targetPosition = [cam.panX, -0.04 + cam.panY, baseZ];
+      const targetPosition = [cam.panX, -0.04 - lift + cam.panY, baseZ];
       easing.damp3(rs.camera.position, targetPosition, 0.22, delta);
       easing.dampE(group.current.rotation, [0, 0, 0], 0.25, delta);
     }
