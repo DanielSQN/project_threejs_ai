@@ -37,6 +37,7 @@ const state = proxy({
   // customizer
   activeView: 'front', // 'front' | 'back' -> derived from / drives shirtRotY
   shirtRotY: 0, // target Y rotation of the shirt (radians), shared by drag + toggle
+  panelOpen: false, // a tool panel is expanded -> camera lifts the shirt into view
   size: 'M',
   quantity: 1,
   // cart

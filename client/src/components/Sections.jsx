@@ -4,15 +4,6 @@ import state, { addToCart, formatPrice, goPage } from '../store';
 import { STYLES, FEATURED, COLLECTIONS } from '../data/products';
 import Tee from './Tee';
 
-const CubeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
-);
-const StarIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z" /></svg>
-);
-const BoltIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" /></svg>
-);
 const BagPlusIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
@@ -21,12 +12,6 @@ const BagPlusIcon = () => (
     <line x1="9" y1="13" x2="15" y2="13" />
   </svg>
 );
-
-const FEATURES = [
-  { icon: <CubeIcon />, label: 'VISTA 3D\nREALISTA' },
-  { icon: <StarIcon />, label: 'DISEÑOS\nEXCLUSIVOS' },
-  { icon: <BoltIcon />, label: 'PERSONALIZACIÓN\nINSTANTÁNEA' },
-];
 
 // home previews: a subset, with a "ver más" into the full section page
 const FEATURED_PREVIEW = FEATURED.slice(0, 4);
@@ -60,16 +45,6 @@ const Sections = () => (
           <span key={i}>{t} <i>✦</i></span>
         ))}
       </div>
-    </div>
-
-    {/* Beneficios */}
-    <div className="features features-section" id="beneficios">
-      {FEATURES.map((f) => (
-        <div className="feature" key={f.label}>
-          <span className="feature-icon">{f.icon}</span>
-          <span className="feature-label">{f.label}</span>
-        </div>
-      ))}
     </div>
 
     {/* Elige tu estilo */}
