@@ -39,7 +39,7 @@ const CollectionsPage = () => (
     </div>
     <div className="page-coll-grid">
       {COLLECTIONS.map((c) => (
-        <button className={`page-coll-card ${c.image ? 'has-photo' : ''}`} key={c.id} style={{ background: c.color }} onClick={() => goCollection(c.id)}>
+        <button className={`page-coll-card ${c.image ? 'has-photo' : ''}`} key={c.id} onClick={() => goCollection(c.id)}>
           {c.image && <img src={c.image} alt="" loading="lazy" className="coll-photo" />}
           <span className="coll-count">{c.count}</span>
           <span className="page-coll-name">{c.name}</span>
@@ -66,9 +66,9 @@ const SectionPage = () => {
         {snap.page === 'colecciones' ? <CollectionsPage /> : <DesignsPage collection={snap.collection} />}
 
         <section className="cta-final">
-          <h2 className="cta-title">Diseña la tuya.</h2>
+          <h2 className="cta-title">Diseña la <em>tuya.</em></h2>
           <p className="cta-sub">Personaliza color, estampado y talla en 3D, o pídela por WhatsApp.</p>
-          <button className="btn-beige" onClick={() => openEditor()}>Personalizar ahora <span aria-hidden>→</span></button>
+          <button className="btn-primary" onClick={() => openEditor()}>Personalizar ahora <span aria-hidden>→</span></button>
         </section>
 
         <SiteFooter />

@@ -17,10 +17,10 @@ export const FEATURED = [
   // --- catálogo SAU (fotos reales)
   { name: 'God is more than able', verse: 'Camiseta oversize · blanca', price: PRICES.camiseta, color: '#F5F5F3', logo: './sau-mark.png', image: './products/god-is-more-than-able.jpg', collection: 'fe' },
   { name: 'Faith', verse: 'Camiseta oversize · lila', price: PRICES.camiseta, color: '#CFC8E6', logo: './sau-mark.png', image: './products/faith-modelo.jpg', collection: 'fe' },
-  { name: 'Amarillo, azul y rojo', verse: 'Camiseta oversize · negra · espalda', price: PRICES.camisetaPremium, color: '#1c1c1c', logo: './sau-mark.png', image: './products/colombia-tricolor-modelo.jpg', collection: 'colombia' },
+  { name: 'Amarillo, azul y rojo', verse: 'Camiseta oversize · negra · espalda', price: PRICES.camisetaPremium, color: '#1c1c1c', logo: './sau-mark-white.png', image: './products/colombia-tricolor-modelo.jpg', collection: 'colombia' },
   { name: 'Soy Colombia como en el alma', verse: 'Hoodie · crema · espalda', price: PRICES.hoodie, color: '#EFE6D2', logo: './sau-mark.png', image: './products/soy-colombia-modelo.jpg', collection: 'colombia', variant: 'hoodie' },
   { name: 'Faith minimal', verse: 'Camiseta oversize · blanca', price: PRICES.camiseta, color: '#F5F5F3', logo: './sau-mark.png', image: './products/faith.jpg', collection: 'fe' },
-  { name: 'Escudo Colombia', verse: 'Camiseta oversize · negra', price: PRICES.camiseta, color: '#1c1c1c', logo: './sau-mark.png', image: './products/colombia-escudo.jpg', collection: 'colombia' },
+  { name: 'Escudo Colombia', verse: 'Camiseta oversize · negra', price: PRICES.camiseta, color: '#1c1c1c', logo: './sau-mark-white.png', image: './products/colombia-escudo.jpg', collection: 'colombia' },
   { name: 'Colombia franja', verse: 'Hoodie · crema', price: PRICES.hoodie, color: '#EFE6D2', logo: './sau-mark.png', image: './products/colombia-franja.jpg', collection: 'colombia', variant: 'hoodie' },
   { name: 'Tierra de colores', verse: 'Hoodie · crema · espalda', price: PRICES.hoodie, color: '#EFE6D2', logo: './sau-mark.png', image: './products/soy-colombia.jpg', collection: 'colombia', variant: 'hoodie' },
   // --- versículos (personalizables en 3D)

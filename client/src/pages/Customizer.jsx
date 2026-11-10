@@ -20,10 +20,12 @@ const I = {
 };
 
 const COLORS = [
-  { name: 'Arena', hex: '#D8CFBE' },
+  { name: 'Blanco', hex: '#F5F5F3' },
   { name: 'Negro', hex: '#1c1c1c' },
+  { name: 'Crema', hex: '#EFE6D2' },
+  { name: 'Lila', hex: '#CFC8E6' },
+  { name: 'Arena', hex: '#D8CFBE' },
   { name: 'Tierra', hex: '#A98B6A' },
-  { name: 'Blanco', hex: '#F3F1EA' },
   { name: 'Gris', hex: '#B7B7B2' },
   { name: 'Marino', hex: '#2B3A55' },
   { name: 'Salvia', hex: '#6E7B6B' },

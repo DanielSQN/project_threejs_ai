@@ -63,7 +63,7 @@ const Cart = () => {
                 ¿No se abrió WhatsApp? Toca aquí
               </a>
             )}
-            <button className="btn-beige" onClick={dismissOrder}>Seguir explorando <span aria-hidden>→</span></button>
+            <button className="btn-primary" onClick={dismissOrder}>Seguir explorando <span aria-hidden>→</span></button>
           </div>
         </div>
       </div>
@@ -81,7 +81,7 @@ const Cart = () => {
         {items.length === 0 ? (
           <div className="cart-empty">
             <p className="cart-empty-text">Tu carrito está vacío.</p>
-            <button className="btn-beige" onClick={design}>Diseñar una prenda <span aria-hidden>→</span></button>
+            <button className="btn-primary" onClick={design}>Diseñar una prenda <span aria-hidden>→</span></button>
           </div>
         ) : (
           <ul className="cart-list">

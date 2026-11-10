@@ -1,22 +1,40 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,600;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
 @import url("https://rsms.me/inter/inter.css");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================================
+   SAU — sistema visual
+   Negro + blanco como el monograma, tipografía condensada gruesa como la
+   portada del catálogo y un único acento verde azulado (el trazo del catálogo).
+   ===================================================================== */
+:root {
+  --bg: #0a0a0b;
+  --surface: #141416;
+  --surface-2: #1d1d20;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --text: #f5f3ee;
+  --muted: #a3a3a8;
+  --dim: #6f6f75;
+  --accent: #7cc4bd;
+  --paper: #e9e6df; /* baldosa clara para siluetas de prenda */
+  --wa: #25d366;
+  --display: "Anton", "Arial Narrow", Impact, sans-serif;
+  --pad-x: 1.25rem;
+}
+@media (min-width: 640px) { :root { --pad-x: 2.5rem; } }
+@media (min-width: 1280px) { :root { --pad-x: 5rem; } }
+
 html {
   font-family: "Inter", sans-serif;
-}
-
-@supports (font-variation-settings: normal) {
-  html {
-    font-family: "Inter var", sans-serif;
-  }
-}
-
-html {
   height: 100%;
+  color-scheme: dark;
+}
+@supports (font-variation-settings: normal) {
+  html { font-family: "Inter var", sans-serif; }
 }
 
 body,
@@ -26,18 +44,30 @@ body,
 }
 
 body {
-  background: #f6f4ef;
+  background: var(--bg);
+  color: var(--text);
   -webkit-overflow-scrolling: touch;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* subtle film grain over everything — kills the "flat template" feel */
+::selection {
+  background: var(--accent);
+  color: #000;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* grano sutil sobre todo: quita la sensación de plantilla plana */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 100;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.07;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
 }
@@ -51,106 +81,161 @@ canvas {
   outline: none;
 }
 
-/* In the customizer touch drives the 3D controls (no page scroll/zoom) */
-.canvas-fullscreen {
-  @apply absolute inset-0 z-0;
-}
-.canvas-fullscreen canvas {
-  touch-action: none;
+/* ---------- tipografía de marca ---------- */
+.head-text,
+.sec-title,
+.cta-title,
+.page-title,
+.coll-name,
+.page-coll-name,
+.step-n,
+.step-title,
+.cart-done-title,
+.mm-links li {
+  font-family: var(--display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.95;
 }
 
-/* On the home the shirt sits in a box; let vertical swipes scroll the page */
-.hero-canvasbox canvas {
-  touch-action: pan-y;
+/* acento: misma letra, color de marca */
+.head-text em,
+.sec-title em,
+.cta-title em,
+.page-title em {
+  font-style: normal;
+  color: var(--accent);
 }
 
+/* texto en contorno (como "CAMISETAS PERSONALIZADAS" en el catálogo) */
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--text);
+}
+
+/* ---------- botones ---------- */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full text-sm font-bold uppercase whitespace-nowrap transition-colors;
+  letter-spacing: 0.06em;
+  background: var(--text);
+  color: #000;
+}
+.btn-primary:hover {
+  background: var(--accent);
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full text-sm font-bold uppercase whitespace-nowrap transition-colors;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+.btn-ghost:hover {
+  border-color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* =====================================================================
+   Home — hero
+   ===================================================================== */
 .home {
   @apply relative w-full flex flex-col overflow-x-hidden;
 }
 
 /* The hero is exactly the first screen. Use svh (stable) so the height does
-   not change as the iOS address bar shows/hides while scrolling, which would
-   resize the shirt. */
+   not change as the iOS address bar shows/hides while scrolling. */
 .hero-screen {
-  @apply flex flex-col shrink-0;
+  @apply relative flex flex-col shrink-0 overflow-hidden;
   height: 100vh;
   height: 100svh;
-  /* warm editorial glow behind the shirt */
+  min-height: 34rem;
   background:
-    radial-gradient(42rem 30rem at 82% -12%, rgba(205, 191, 163, 0.5), transparent 62%),
-    radial-gradient(36rem 26rem at 4% 12%, rgba(43, 58, 85, 0.07), transparent 60%);
+    radial-gradient(46rem 30rem at 78% 8%, rgba(124, 196, 189, 0.13), transparent 62%),
+    radial-gradient(36rem 26rem at 0% 100%, rgba(255, 255, 255, 0.05), transparent 60%);
 }
 
-/* ===== Hero layout (product hero, single centered column) ===== */
+/* monograma gigante en contorno detrás de la prenda */
+.hero-bgword {
+  @apply absolute pointer-events-none select-none;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-size: 62vw;
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.07);
+}
+
 .hero {
-  @apply flex flex-col items-center text-center w-full flex-1 min-h-0 px-6 pb-3;
-  padding-top: 4rem;
+  @apply relative z-[1] flex flex-col items-center text-center w-full flex-1 min-h-0;
+  padding: 4.5rem var(--pad-x) 0.5rem;
 }
-@media (min-width: 640px) {
-  .hero { padding-top: 5rem; }
-}
-
-.head-text {
-  @apply text-[2.1rem] sm:text-[3rem] lg:text-[4.25rem] xl:text-[5rem] leading-none font-black tracking-tight text-black mt-1 whitespace-nowrap;
+.hero-copy {
+  @apply flex flex-col items-center;
 }
 
-/* serif-italic accent — the typographic signature of the brand */
-.head-text em,
-.sec-title em,
-.cta-title em,
-.page-title em {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-style: italic;
-  font-weight: 500;
-  color: #a8906a;
-  letter-spacing: -0.01em;
-}
-
-/* mobile gender selector at the top of the hero */
 .hero-gender {
-  @apply mb-2;
+  @apply mb-3;
 }
 
-/* brand eyebrow above the hero title */
 .hero-eyebrow {
-  @apply flex items-center gap-3 text-[10px] font-bold uppercase text-gray-500 mt-2;
-  letter-spacing: 0.26em;
+  @apply flex items-center gap-3 text-[10px] font-bold uppercase;
+  letter-spacing: 0.28em;
+  color: var(--accent);
 }
 .hero-eyebrow::before,
 .hero-eyebrow::after {
   content: "";
-  @apply h-px w-8 bg-black/20;
+  @apply h-px w-6;
+  background: var(--line-strong);
 }
 
-/* Stage holds the shirt + side arrows; grows to fill the leftover space so
-   the full shirt always fits with margin (the breeze never crops it) */
+.head-text {
+  @apply mt-2 whitespace-nowrap;
+  font-size: clamp(3.4rem, 17vw, 6rem);
+  color: var(--text);
+}
+
+.hero-subtitle {
+  @apply text-sm leading-relaxed mt-2 max-w-xs;
+  color: var(--muted);
+}
+
+/* Stage holds the shirt; grows to fill the leftover space so the full shirt
+   always fits with margin (the breeze never crops it) */
 .hero-stage {
-  @apply relative flex items-center justify-center w-full flex-1 min-h-0 my-1 lg:max-w-2xl lg:mx-auto;
+  @apply relative flex items-center justify-center w-full flex-1 min-h-0 my-1;
 }
-
+/* foco de luz: separa la prenda del fondo negro (también las prendas oscuras) */
+.hero-stage::before {
+  content: "";
+  @apply absolute pointer-events-none;
+  inset: 4% 6%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.17), rgba(124, 196, 189, 0.07) 55%, transparent 100%);
+}
 .hero-canvasbox {
-  @apply w-full h-full;
+  @apply relative w-full h-full;
+}
+/* On the home the shirt sits in a box; let vertical swipes scroll the page */
+.hero-canvasbox canvas {
+  touch-action: pan-y;
 }
 
-.hero-arrow {
-  @apply hidden lg:flex absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white text-black shadow-md border border-black/5 hover:bg-gray-50 active:scale-95 transition;
+.hero-cta {
+  @apply flex items-center justify-center gap-2 w-full;
 }
-.hero-arrow.left { left: 0.25rem; }
-.hero-arrow.right { right: 0.25rem; }
-
-.hero-dots {
-  @apply flex justify-center items-center gap-2 mb-1;
-}
-.hero-dots .dot {
-  @apply w-2 h-2 rounded-full bg-gray-300 transition-all;
-}
-.hero-dots .dot.active {
-  @apply bg-black w-2.5 h-2.5;
+.hero-cta .btn-primary,
+.hero-cta .btn-ghost {
+  @apply px-5 py-3.5 text-xs;
 }
 
 /* mobile "scroll for more" hint at the bottom of the hero */
 .hero-scroll-hint {
-  @apply self-center flex flex-col items-center gap-0.5 mt-1 mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500;
+  @apply relative z-[1] self-center flex flex-col items-center mt-2 mb-1 text-[10px] font-bold uppercase;
+  letter-spacing: 0.22em;
+  color: var(--dim);
 }
 .hero-scroll-chevron {
   animation: heroBounce 1.6s ease-in-out infinite;
@@ -160,65 +245,120 @@ canvas {
   50% { transform: translateY(4px); opacity: 1; }
 }
 
-/* ===== Navbar (fixed, translucent) ===== */
-.navbar {
-  @apply fixed top-0 left-0 w-full z-50 flex items-center justify-between xl:px-20 sm:px-10 px-4 py-3;
-  /* solid enough that scrolling content never muddies the bar (iOS) */
-  background: rgba(246, 244, 239, 0.86);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+/* escritorio: texto a la izquierda, prenda a la derecha */
+@media (min-width: 1024px) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    grid-template-rows: 1fr auto 1fr;
+    column-gap: 2rem;
+    text-align: left;
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+  }
+  .hero-copy {
+    grid-column: 1;
+    grid-row: 2;
+    align-items: flex-start;
+  }
+  .hero-stage {
+    grid-column: 2;
+    grid-row: 1 / 4;
+    height: 100%;
+    margin: 0;
+  }
+  .hero-cta {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: start;
+    justify-content: flex-start;
+    margin-top: 2rem;
+    gap: 0.75rem;
+  }
+  .hero-cta .btn-primary,
+  .hero-cta .btn-ghost {
+    @apply px-8 py-4 text-sm;
+  }
+  .hero-eyebrow::before { display: none; }
+  .head-text {
+    white-space: normal;
+    font-size: clamp(6rem, 11.5vw, 12rem);
+    margin-top: 1rem;
+  }
+  .hero-subtitle {
+    @apply text-base max-w-md mt-5;
+  }
+  .hero-bgword {
+    left: 72%;
+    font-size: 38vw;
+  }
 }
 
+/* =====================================================================
+   Navbar (fija, translúcida)
+   ===================================================================== */
+.navbar {
+  @apply fixed top-0 left-0 w-full z-50 flex items-center justify-between py-3;
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+  background: rgba(10, 10, 11, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
 .nav-side {
-  @apply flex items-center gap-6 min-w-[2.5rem];
+  @apply flex items-center gap-8 min-w-[2.5rem];
 }
 .nav-side-r {
   @apply justify-end;
 }
-
 .nav-logo-img {
   @apply h-9 sm:h-10 w-auto object-contain cursor-pointer;
 }
 .nav-logo-center {
   @apply absolute left-1/2 -translate-x-1/2;
 }
-
 .nav-links {
-  @apply hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600;
+  @apply hidden lg:flex items-center gap-7 text-xs font-bold uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
 }
-
 .nav-links li {
-  @apply cursor-pointer hover:text-black transition-colors;
+  @apply cursor-pointer transition-colors;
 }
-
-/* gender selector centered in the navbar */
+.nav-links li:hover,
+.nav-links li.active {
+  color: var(--text);
+}
 .nav-gender {
   @apply absolute left-1/2 -translate-x-1/2;
 }
-
-.nav-right {
-  @apply flex items-center gap-1;
-}
-
 .nav-icon-btn {
-  @apply relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors text-black;
+  @apply relative w-10 h-10 flex items-center justify-center rounded-full transition-colors;
+  color: var(--text);
 }
-
+.nav-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
 .cart-badge {
-  @apply absolute top-0.5 right-0.5 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
-  background: #6d28d9;
+  @apply absolute top-0.5 right-0.5 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center;
+  background: var(--accent);
+  color: #000;
 }
 
-/* ===== Gender segmented control (navbar + mobile menu) ===== */
+/* selector de género (navbar + hero + menú) */
 .gender-seg {
-  @apply inline-flex items-center bg-white border border-gray-200 rounded-full p-1 shadow-sm;
+  @apply inline-flex items-center rounded-full p-1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
 }
 .seg {
-  @apply flex items-center justify-center px-5 py-1.5 rounded-full text-gray-500 transition-colors;
+  @apply flex items-center justify-center px-5 py-1.5 rounded-full transition-colors;
+  color: var(--muted);
 }
 .seg.active {
-  @apply bg-black text-white;
+  background: var(--text);
+  color: #000;
 }
 .mm-gender {
   @apply w-full mb-5;
@@ -227,282 +367,427 @@ canvas {
   @apply flex-1 py-2.5;
 }
 
-/* ===== Hero text ===== */
-.hero-subtitle {
-  @apply text-sm lg:text-base font-medium text-gray-700 mt-2;
-}
-
-.hero-desc {
-  @apply max-w-sm font-normal text-gray-500 text-xs lg:text-sm leading-relaxed mt-1 mb-3;
-}
-
-.hero-cta {
-  @apply flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-2;
-}
-
-.btn-beige {
-  @apply inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-bold text-black transition-colors;
-  background: #cdbfa3;
-}
-.btn-beige:hover {
-  background: #c2b291;
-}
-
-.btn-ghost {
-  @apply px-7 py-3.5 rounded-full border border-gray-300 text-black text-sm font-semibold hover:border-black transition-colors items-center gap-2;
-}
-
-/* ===== Hero carousel (dots + arrows) ===== */
-.hero-carousel {
-  @apply flex justify-center items-center gap-2.5 my-1;
-}
-
-.dots-arrow {
-  @apply text-gray-400 hover:text-black text-2xl leading-none px-2 transition-colors;
-}
-
-.hero-carousel .dot {
-  @apply w-2.5 h-2.5 rounded-full bg-gray-300 transition-all;
-}
-
-.hero-carousel .dot.active {
-  @apply bg-black;
-}
-
-/* ===== Brand marquee (hero → content separator) ===== */
+/* =====================================================================
+   Franja de marca (separa el hero del contenido)
+   ===================================================================== */
 .marquee {
-  @apply w-full overflow-hidden bg-[#1c1c1c];
+  @apply w-full overflow-hidden;
+  background: var(--text);
 }
 .marquee-track {
   @apply flex items-center;
   width: max-content;
-  animation: marqueeScroll 26s linear infinite;
+  animation: marqueeScroll 32s linear infinite;
 }
 .marquee-track span {
-  @apply flex items-center gap-4 px-4 py-2.5 text-[10px] font-bold uppercase whitespace-nowrap;
-  letter-spacing: 0.24em;
-  color: #e6dcc4;
+  @apply flex items-center gap-5 px-3 py-2.5 uppercase whitespace-nowrap;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  color: #0a0a0b;
 }
 .marquee-track span i {
-  @apply not-italic;
-  color: #a8906a;
+  @apply not-italic text-sm;
+  color: #2f8f86;
 }
 @keyframes marqueeScroll {
   to { transform: translateX(-50%); }
 }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .hero-scroll-chevron { animation: none; }
+}
 
 /* =====================================================================
-   Landing sections (phase 3)
+   Secciones del inicio
    ===================================================================== */
 .sections {
   @apply flex flex-col;
 }
-
 .sec {
-  @apply px-6 sm:px-10 xl:px-20 pt-14 pb-4;
+  padding: 4.5rem var(--pad-x) 0.5rem;
+}
+@media (min-width: 1024px) {
+  .sec { padding-top: 7rem; }
 }
 
-/* numbered eyebrow + hairline = the top separation of each section */
 .sec-eyebrow {
-  @apply flex items-center gap-3 text-[10px] font-bold uppercase text-gray-400 mb-3;
-  letter-spacing: 0.24em;
+  @apply flex items-center gap-3 text-[10px] font-bold uppercase mb-4;
+  letter-spacing: 0.26em;
+  color: var(--dim);
 }
 .sec-eyebrow > span {
-  @apply text-black;
+  color: var(--accent);
 }
 .sec-eyebrow::after {
   content: "";
-  @apply h-px flex-1 bg-black/10;
+  @apply h-px flex-1;
+  background: var(--line);
 }
-
 .sec-head {
-  @apply mb-6;
+  @apply mb-7;
 }
 .sec-title {
-  @apply text-2xl sm:text-3xl font-black tracking-tight text-black;
+  font-size: clamp(2.6rem, 9vw, 5rem);
+  color: var(--text);
 }
 .sec-sub {
-  @apply text-sm text-gray-500 mt-1;
+  @apply text-sm mt-3 max-w-md;
+  color: var(--muted);
 }
 .sec-head-row {
   @apply flex items-end justify-between gap-4;
 }
 .sec-more {
-  @apply shrink-0 text-sm font-bold text-black hover:opacity-70 transition-opacity;
+  @apply hidden sm:block shrink-0 text-xs font-bold uppercase pb-1 transition-colors;
+  letter-spacing: 0.14em;
+  color: var(--text);
+  border-bottom: 1px solid var(--line-strong);
+}
+.sec-more:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 .sec-more-btn {
-  @apply mt-5 mx-auto flex items-center justify-center px-6 py-3 rounded-full border border-black/20 text-sm font-bold text-black hover:border-black transition-colors;
+  @apply mt-7 mx-auto flex;
 }
 
-/* Elige tu estilo */
+/* ---------- tarjetas de producto ---------- */
+.design-grid,
+.page-grid {
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5;
+}
+.page-grid {
+  padding: 1.5rem var(--pad-x) 0;
+}
+.design-card {
+  @apply flex flex-col text-left min-w-0;
+}
+.design-tee {
+  @apply relative flex items-center justify-center overflow-hidden cursor-pointer rounded-2xl;
+  aspect-ratio: 4 / 5;
+  background: var(--paper);
+}
+.design-tee .tee-svg {
+  @apply w-3/5 h-auto transition-transform duration-500;
+}
+.design-photo {
+  @apply absolute inset-0 w-full h-full object-cover transition-transform duration-700;
+}
+.design-card:hover .design-photo,
+.design-card:hover .tee-svg {
+  transform: scale(1.05);
+}
+/* "Personalizar" aparece sobre la foto al pasar el cursor (escritorio) */
+.design-hover {
+  @apply absolute left-3 right-3 bottom-3 hidden lg:flex items-center justify-center py-3 rounded-full text-xs font-bold uppercase opacity-0 translate-y-2 transition-all duration-300;
+  letter-spacing: 0.08em;
+  background: rgba(10, 10, 11, 0.82);
+  color: var(--text);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.design-card:hover .design-hover {
+  @apply opacity-100 translate-y-0;
+}
+.design-info {
+  @apply flex flex-col gap-0.5 pt-3 px-0.5;
+}
+.design-name {
+  @apply text-sm font-bold leading-snug;
+  color: var(--text);
+}
+.design-verse {
+  @apply text-xs;
+  color: var(--dim);
+}
+/* móvil: precio arriba y botones debajo; escritorio: todo en una fila */
+.design-row {
+  @apply flex flex-col gap-2 mt-1 lg:flex-row lg:items-center lg:justify-between;
+}
+.design-price {
+  @apply text-sm font-semibold;
+  color: var(--text);
+}
+.design-actions {
+  @apply flex items-center gap-2;
+}
+.design-personalize {
+  @apply lg:hidden flex-1 min-w-0 px-3 py-2.5 rounded-full text-[11px] font-bold uppercase transition-colors;
+  letter-spacing: 0.04em;
+  background: var(--text);
+  color: #000;
+}
+.design-add {
+  @apply w-9 h-9 shrink-0 flex items-center justify-center rounded-full transition-colors;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+.design-add:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+}
+
+/* ---------- colecciones ---------- */
+.coll-grid {
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5;
+}
+.coll-card,
+.page-coll-card {
+  @apply relative flex flex-col justify-end overflow-hidden rounded-2xl p-4 sm:p-6 text-left transition-transform duration-300;
+  min-height: 15rem;
+  background: linear-gradient(150deg, var(--surface-2), var(--surface) 60%);
+  border: 1px solid var(--line);
+}
+.coll-card:hover,
+.page-coll-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+}
+.coll-photo {
+  @apply absolute inset-0 w-full h-full object-cover transition-transform duration-700;
+}
+.coll-card:hover .coll-photo,
+.page-coll-card:hover .coll-photo {
+  transform: scale(1.05);
+}
+.has-photo::after {
+  content: "";
+  @apply absolute inset-0 pointer-events-none;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.1) 70%);
+}
+.coll-card > span,
+.page-coll-card > span {
+  @apply relative z-[1];
+}
+.coll-count {
+  @apply text-[10px] font-bold uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+.coll-name,
+.page-coll-name {
+  @apply mt-1;
+  font-size: clamp(1.9rem, 6vw, 2.75rem);
+  color: var(--text);
+}
+/* sin foto: nombre en contorno */
+.coll-card:not(.has-photo) .coll-name,
+.page-coll-card:not(.has-photo) .page-coll-name {
+  color: transparent;
+  -webkit-text-stroke: 1.2px var(--text);
+}
+.coll-link {
+  @apply text-xs font-semibold mt-2;
+  color: var(--muted);
+}
+
+/* ---------- estilos de prenda ---------- */
 .style-grid {
-  @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5;
 }
 .style-card {
-  @apply flex flex-col items-center gap-2 p-5 rounded-2xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  @apply flex flex-col items-center gap-3 px-4 pt-6 pb-4 rounded-2xl transition-transform duration-300;
+  background: var(--paper);
+}
+.style-card:hover {
+  transform: translateY(-3px);
 }
 .style-tee {
-  @apply w-24 h-24 flex items-center justify-center;
+  @apply w-28 h-28 flex items-center justify-center;
 }
 .tee-svg {
   @apply w-full h-full;
 }
 .style-label {
-  @apply text-sm font-semibold text-black;
+  @apply text-xs font-bold uppercase;
+  letter-spacing: 0.14em;
+  color: #0a0a0b;
 }
 
-/* Diseños destacados */
-.design-grid {
-  @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
+/* ---------- cómo funciona ---------- */
+.steps {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-5;
 }
-.design-card {
-  @apply flex flex-col rounded-2xl overflow-hidden text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+.step {
+  @apply flex flex-col gap-2 p-6 rounded-2xl;
+  background: var(--surface);
+  border: 1px solid var(--line);
 }
-.design-tee {
-  @apply flex items-center justify-center p-4 h-40;
+.step-n {
+  font-size: 4rem;
+  color: transparent;
+  -webkit-text-stroke: 1.2px var(--accent);
 }
-.design-tee .tee-svg {
-  @apply w-28 h-28;
+.step-title {
+  @apply mt-2;
+  font-size: 1.6rem;
+  color: var(--text);
 }
-.design-info {
-  @apply flex flex-col gap-0.5 p-4;
-}
-.design-name {
-  @apply text-sm font-bold text-black;
-}
-.design-verse {
-  @apply text-xs text-gray-400;
-}
-.design-price {
-  @apply text-sm font-semibold text-black mt-1;
-}
-.design-tee {
-  @apply cursor-pointer;
-}
-.design-actions {
-  @apply flex items-center gap-2 mt-3;
-}
-.design-personalize {
-  @apply flex-1 py-2 rounded-full bg-black text-white text-xs font-bold hover:bg-gray-800 transition-colors;
-}
-.design-add {
-  @apply w-9 h-9 shrink-0 flex items-center justify-center rounded-full border border-gray-300 text-black hover:border-black transition-colors;
-}
-.coll-link {
-  @apply text-xs font-semibold text-black/70 mt-1;
+.step-text {
+  @apply text-sm leading-relaxed;
+  color: var(--muted);
 }
 
-/* Colecciones */
-.coll-grid {
-  @apply grid grid-cols-1 sm:grid-cols-3 gap-4;
-}
-.coll-card {
-  @apply flex flex-col justify-end h-44 rounded-2xl p-5 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-.coll-name {
-  @apply text-2xl text-black;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-style: italic;
-  font-weight: 500;
-}
-.coll-count {
-  @apply text-xs text-gray-600;
-}
-
-/* CTA final */
+/* ---------- CTA final ---------- */
 .cta-final {
-  @apply flex flex-col items-center text-center gap-3 px-6 py-16 mt-8 bg-[#1c1c1c];
+  @apply relative flex flex-col items-center text-center gap-4 overflow-hidden mt-20;
+  padding: 5rem var(--pad-x);
+  border-top: 1px solid var(--line);
+  background: radial-gradient(40rem 22rem at 50% 115%, rgba(124, 196, 189, 0.2), transparent 65%);
 }
 .cta-title {
-  @apply text-3xl sm:text-4xl font-black tracking-tight text-white;
+  font-size: clamp(3rem, 12vw, 8rem);
+  color: var(--text);
 }
 .cta-sub {
-  @apply text-sm text-gray-300 max-w-sm;
+  @apply text-sm sm:text-base max-w-md;
+  color: var(--muted);
 }
-.cta-final .btn-beige {
-  @apply mt-2;
+.cta-actions {
+  @apply flex flex-wrap items-center justify-center gap-3 mt-3;
 }
 
-/* Footer */
+/* ---------- footer ---------- */
 .site-footer {
-  @apply flex flex-col items-center gap-1 py-8 bg-[#1c1c1c] border-t border-white/10;
+  @apply relative flex flex-col items-center gap-1 overflow-hidden pt-12;
+  padding-bottom: 6.5rem;
+  border-top: 1px solid var(--line);
+}
+.footer-logo {
+  @apply h-14 w-auto mb-2;
 }
 .footer-brand {
-  @apply text-sm font-black tracking-widest text-white;
+  @apply text-sm font-black;
+  letter-spacing: 0.5em;
+  color: var(--text);
+}
+.footer-tag {
+  @apply text-xs;
+  color: var(--muted);
+}
+.footer-social {
+  @apply my-4;
+}
+.footer-contact,
+.footer-handle {
+  @apply text-sm font-semibold transition-colors;
+  color: var(--text);
+}
+.footer-contact:hover {
+  color: var(--accent);
 }
 .footer-copy {
-  @apply text-xs text-gray-500;
+  @apply text-xs mt-3;
+  color: var(--dim);
+}
+
+/* redes */
+.social-links {
+  @apply flex items-center gap-3;
+}
+.social-links a {
+  @apply flex items-center justify-center w-11 h-11 rounded-full transition-colors;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+.social-links a:hover {
+  background: var(--text);
+  color: #000;
+}
+
+/* botón flotante de WhatsApp */
+.wa-fab {
+  @apply fixed z-50 flex items-center justify-center w-14 h-14 rounded-full text-white transition-transform hover:scale-105;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  background: var(--wa);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* =====================================================================
-   Section pages (Diseños / Colecciones)
+   Páginas de sección (Diseños / Colecciones)
    ===================================================================== */
 .section-page {
   @apply relative w-full min-h-screen flex flex-col;
-  background:
-    radial-gradient(40rem 26rem at 85% -6%, rgba(205, 191, 163, 0.4), transparent 60%),
-    radial-gradient(30rem 22rem at 0% 30%, rgba(43, 58, 85, 0.06), transparent 60%);
+  background: radial-gradient(44rem 26rem at 85% -6%, rgba(124, 196, 189, 0.12), transparent 60%);
 }
 .page-body {
   @apply flex-1 flex flex-col;
   padding-top: 4rem;
 }
-@media (min-width: 640px) {
-  .page-body { padding-top: 5rem; }
-}
 .page-head {
-  @apply px-6 sm:px-10 xl:px-20 pt-8 pb-2;
+  padding: 2.5rem var(--pad-x) 0.5rem;
 }
 .page-back {
-  @apply text-sm font-semibold text-gray-500 hover:text-black transition-colors mb-3;
+  @apply text-xs font-bold uppercase mb-4 transition-colors;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.page-back:hover {
+  color: var(--text);
 }
 .page-title {
-  @apply text-3xl sm:text-4xl font-black tracking-tight text-black;
+  font-size: clamp(3.4rem, 14vw, 8rem);
+  color: var(--text);
 }
 .page-sub {
-  @apply text-sm text-gray-500 mt-1 max-w-xl;
-}
-.page-grid {
-  @apply grid grid-cols-2 lg:grid-cols-4 gap-4 px-6 sm:px-10 xl:px-20 pt-6;
+  @apply text-sm mt-3 max-w-xl;
+  color: var(--muted);
 }
 .page-coll-grid {
-  @apply grid grid-cols-1 sm:grid-cols-3 gap-4 px-6 sm:px-10 xl:px-20 pt-6;
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5;
+  padding: 1.5rem var(--pad-x) 0;
 }
 .page-coll-card {
-  @apply flex flex-col justify-end h-56 rounded-2xl p-6 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-.page-coll-name {
-  @apply text-3xl text-black mt-1;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-style: italic;
-  font-weight: 500;
+  min-height: 19rem;
 }
 .page-coll-desc {
-  @apply text-sm text-gray-600 mt-1 mb-2;
+  @apply text-sm mt-2 mb-1 max-w-xs;
+  color: var(--muted);
+}
+.has-photo .page-coll-desc {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* filtro por colección */
+.coll-filter {
+  @apply flex gap-2 overflow-x-auto pt-5 pb-1;
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+  scrollbar-width: none;
+}
+.coll-filter::-webkit-scrollbar {
+  display: none;
+}
+.coll-filter button {
+  @apply shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase transition-colors;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border: 1px solid var(--line-strong);
+}
+.coll-filter button:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+.coll-filter button.active {
+  background: var(--text);
+  border-color: var(--text);
+  color: #000;
 }
 
 /* =====================================================================
-   Customizer (phase 2)
+   Personalizador 3D
    ===================================================================== */
 .customizer {
   @apply fixed inset-0 z-40 overflow-hidden;
+  /* gris de estudio: cualquier color de prenda (también negro) se lee bien */
   background:
-    radial-gradient(40rem 30rem at 85% -5%, rgba(205, 191, 163, 0.5), transparent 60%),
-    radial-gradient(32rem 26rem at 0% 100%, rgba(43, 58, 85, 0.08), transparent 60%),
-    #f6f4ef;
+    radial-gradient(60rem 42rem at 50% 42%, #4a4b50, transparent 70%),
+    radial-gradient(40rem 30rem at 90% 0%, rgba(124, 196, 189, 0.16), transparent 60%),
+    #121214;
 }
-
-/* fullscreen 3D shirt */
 .cz-canvas-full {
   @apply absolute inset-0 z-0;
 }
@@ -510,136 +795,132 @@ canvas {
   touch-action: none;
 }
 
-/* ---- top bar: back (left) + recenter (right) ---- */
+/* superficies de vidrio oscuro del editor */
+.cz-back,
+.cz-viewtoggle,
+.cz-menu,
+.cz-recenter {
+  background: rgba(16, 16, 18, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: var(--text);
+}
+
 .cz-top {
   @apply absolute top-0 left-0 w-full z-20 flex items-center justify-between px-4 sm:px-8 py-4 pointer-events-none;
 }
 .cz-back {
-  @apply pointer-events-auto flex items-center gap-2 h-10 px-3.5 rounded-full text-sm font-semibold text-black shadow-sm;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  @apply pointer-events-auto flex items-center gap-2 h-10 px-3.5 rounded-full text-sm font-semibold;
 }
 .cz-back-t {
   @apply hidden sm:inline;
 }
 .cz-cart-top {
-  @apply pointer-events-auto flex items-center gap-2 h-10 px-4 rounded-full text-white text-sm font-bold shadow-sm transition-colors whitespace-nowrap;
-  background: rgba(18, 18, 18, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  @apply pointer-events-auto flex items-center gap-2 h-10 px-4 rounded-full text-xs font-bold uppercase transition-colors whitespace-nowrap;
+  letter-spacing: 0.05em;
+  background: var(--text);
+  color: #000;
 }
 .cz-cart-top:hover {
-  background: rgba(18, 18, 18, 0.95);
-}
-.cz-cart-top-t {
-  @apply inline;
+  background: var(--accent);
 }
 
-/* ---- bottom area: view toggle + menu ---- */
 .cz-bottom {
   @apply absolute left-0 right-0 bottom-0 z-20 flex flex-col items-center gap-3 pb-0 lg:pb-6 pointer-events-none;
 }
-
 .cz-viewtoggle {
-  @apply flex items-center gap-1 rounded-full p-1 shadow-md pointer-events-auto;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  @apply flex items-center gap-1 rounded-full p-1 pointer-events-auto;
 }
 .cz-viewtoggle button {
-  @apply px-6 py-2 rounded-full text-sm font-semibold text-gray-600 transition-colors;
+  @apply px-6 py-2 rounded-full text-sm font-semibold transition-colors;
+  color: var(--muted);
 }
 .cz-viewtoggle button.active {
-  @apply bg-black text-white;
+  background: var(--text);
+  color: #000;
 }
 
-/* rotate hint sits centered over the shirt, then fades away */
 .cz-rotate-hint {
-  @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-2 text-sm font-semibold text-white bg-black/60 backdrop-blur px-4 py-2.5 rounded-full shadow-lg pointer-events-none;
+  @apply absolute left-1/2 top-1/2 z-20 flex items-center gap-2 text-sm font-semibold text-white bg-black/70 backdrop-blur px-4 py-2.5 rounded-full shadow-lg pointer-events-none whitespace-nowrap;
   animation: czHintFade 3.5s ease forwards;
 }
 @keyframes czHintFade {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
   14% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  72% { opacity: 1; }
-  100% { opacity: 0; }
+  72% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
 }
 
-/* the menu is a docked GLASS bar with a constant width — full width on mobile,
-   a fixed card on desktop — so it never shrinks/grows between the collapsed
-   and expanded states. Only the panel above the tabs appears/disappears; the
-   shirt shows through the translucency. */
+/* docked menu: constant width — full on mobile, fixed card on desktop */
 .cz-menu {
-  @apply pointer-events-auto flex flex-col
-         w-full rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.08)]
-         lg:w-[520px] lg:rounded-3xl lg:shadow-[0_10px_40px_rgba(0,0,0,0.10)];
-  background: rgba(255, 255, 255, 0.62);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  @apply pointer-events-auto flex flex-col w-full rounded-t-3xl lg:w-[520px] lg:rounded-3xl;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.35);
 }
-
 .cz-menu-panel {
-  @apply px-5 pt-5 pb-3 border-b border-black/5;
+  @apply px-5 pt-5 pb-4;
+  border-bottom: 1px solid var(--line);
 }
 .cz-menu-title {
-  @apply text-sm font-bold text-black mb-3;
+  @apply text-[11px] font-bold uppercase mb-3;
+  letter-spacing: 0.16em;
+  color: var(--muted);
 }
-
 .cz-tabs {
   @apply flex items-stretch justify-around gap-1 px-3 pt-2.5;
+  padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
 }
 .cz-tab {
   @apply flex flex-col items-center gap-1;
 }
 .cz-tab-icon {
-  @apply w-12 h-9 flex items-center justify-center rounded-full text-gray-500 transition-colors;
+  @apply w-12 h-9 flex items-center justify-center rounded-full transition-colors;
+  color: var(--muted);
 }
 .cz-tab.active .cz-tab-icon {
-  @apply bg-[#ece5d8] text-black;
+  background: var(--text);
+  color: #000;
 }
 .cz-tab-label {
-  @apply text-[11px] font-semibold text-gray-500;
+  @apply text-[11px] font-semibold;
+  color: var(--muted);
 }
 .cz-tab.active .cz-tab-label {
-  @apply text-black;
+  color: var(--text);
 }
-
-/* recenter button: floats on the right, just above the docked menu */
 .cz-recenter {
-  @apply pointer-events-auto self-end mr-4 lg:mr-8 w-11 h-11 flex items-center justify-center rounded-full text-black shadow-md active:scale-95 transition;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  @apply pointer-events-auto self-end mr-4 lg:mr-8 w-11 h-11 flex items-center justify-center rounded-full active:scale-95 transition;
 }
 
-/* size pills (Talla tool) */
 .cz-sizes {
   @apply flex flex-wrap gap-2;
 }
 .cz-size-pill {
-  @apply min-w-[3rem] px-3 py-2 rounded-full border border-gray-200 text-sm font-semibold text-gray-600 hover:border-black/40 transition-colors;
+  @apply min-w-[3rem] px-3 py-2 rounded-full text-sm font-semibold transition-colors;
+  color: var(--muted);
+  border: 1px solid var(--line-strong);
+}
+.cz-size-pill:hover {
+  color: var(--text);
+  border-color: var(--text);
 }
 .cz-size-pill.active {
-  @apply bg-black text-white border-black;
+  background: var(--text);
+  border-color: var(--text);
+  color: #000;
 }
 
-/* ---- color swatches ---- */
 .cz-swatches {
   @apply flex flex-wrap gap-3;
 }
 .cz-swatch {
-  @apply w-9 h-9 rounded-full border border-black/10;
+  @apply w-9 h-9 rounded-full;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .cz-swatch.active {
-  @apply ring-2 ring-black ring-offset-2 ring-offset-white;
+  box-shadow: 0 0 0 2px #101012, 0 0 0 4px var(--text);
 }
 
-/* ---- design upload buttons (front / back) ---- */
 .cz-upills {
   @apply grid grid-cols-2 gap-2;
 }
@@ -647,60 +928,21 @@ canvas {
   @apply relative;
 }
 .cz-upill {
-  @apply flex items-center justify-center gap-2 w-full py-2.5 pr-6 rounded-full border border-black/10 bg-white/50 text-xs font-bold text-black cursor-pointer hover:border-black/40 transition-colors whitespace-nowrap;
+  @apply flex items-center justify-center gap-2 w-full py-2.5 pr-6 rounded-full text-xs font-bold cursor-pointer transition-colors whitespace-nowrap;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line-strong);
+}
+.cz-upill:hover {
+  border-color: var(--text);
 }
 .cz-upill.active {
-  @apply bg-black text-white border-black;
+  background: var(--text);
+  border-color: var(--text);
+  color: #000;
 }
 .cz-upill-x {
-  @apply absolute top-1/2 right-2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-white text-black text-sm leading-none shadow-sm;
-}
-
-.cz-soon {
-  @apply flex flex-col gap-1;
-}
-.cz-soon-text {
-  @apply text-sm text-gray-500;
-}
-
-.download-btn {
-  @apply w-14 h-14 flex justify-center items-center rounded-full glassmorphism cursor-pointer outline-none;
-}
-
-.editortabs-container {
-  @apply glassmorphism w-16 border-[2px] rounded-lg flex flex-col justify-center items-center ml-1 py-4 gap-4;
-}
-
-.filtertabs-container {
-  @apply absolute z-10 bottom-5 right-0 left-0 w-full flex justify-center items-center flex-wrap gap-4;
-}
-
-.aipicker-container {
-  @apply absolute left-full ml-3 glassmorphism p-3 w-[195px] h-[220px] rounded-md flex flex-col gap-4;
-}
-
-.aipicker-textarea {
-  @apply w-full bg-transparent text-sm border border-gray-300 p-2 outline-none flex-1;
-}
-
-.filepicker-container {
-  @apply absolute left-full ml-3 glassmorphism p-3 w-[195px] h-[220px] flex flex-col rounded-md;
-}
-
-.filepicker-label {
-  @apply border border-gray-300 py-1.5 px-2 rounded-md shadow-sm text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 cursor-pointer w-fit;
-}
-
-.tab-btn {
-  @apply w-14 h-14 flex justify-center items-center cursor-pointer select-none;
-}
-
-.glassmorphism {
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 2px 30px 0 rgba(31, 38, 135, 0.07);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  @apply absolute top-1/2 right-2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-black text-white text-sm leading-none;
 }
 
 input[type="file"] {
@@ -709,207 +951,49 @@ input[type="file"] {
   opacity: 0;
 }
 
-.sketch-picker {
-  width: 170px !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: 0 2px 30px 0 rgba(31, 38, 135, 0.07) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 6px !important;
-}
-
-.sketch-picker > div:nth-child(3) {
-  display: none !important;
-}
-
-/* =====================================================================
-   Cart (page) + editor cart icon
-   ===================================================================== */
-.cz-icon-cart {
-  @apply relative w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/10 text-black shadow-sm;
-}
-
-.cart {
-  @apply fixed inset-0 z-50 flex flex-col;
-  background: rgba(246, 244, 239, 0.9);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-.cart-top {
-  @apply flex items-center justify-between px-5 sm:px-8 py-4 border-b border-black/5;
-}
-.cart-top .cz-back {
-  @apply flex items-center gap-2 text-sm font-semibold text-black;
-}
-.cart-title {
-  @apply text-base font-bold text-black;
-}
-.cart-body {
-  @apply flex-1 overflow-y-auto px-5 sm:px-8 py-5;
-}
-.cart-empty {
-  @apply flex flex-col items-center justify-center gap-4 h-full text-center;
-}
-.cart-empty-text {
-  @apply text-gray-500;
-}
-.cart-list {
-  @apply flex flex-col gap-3 max-w-2xl mx-auto;
-}
-.cart-item {
-  @apply flex items-center gap-4 p-3 rounded-2xl bg-white border border-black/5;
-}
-.cart-swatch {
-  @apply w-14 h-14 rounded-xl border border-black/10 shrink-0;
-}
-.cart-item-info {
-  @apply flex flex-col flex-1 min-w-0;
-}
-.cart-item-name {
-  @apply text-sm font-bold text-black truncate;
-}
-.cart-item-meta {
-  @apply text-xs text-gray-500;
-}
-.cart-item-price {
-  @apply text-sm font-semibold text-black mt-1;
-}
-.cart-item-actions {
-  @apply flex flex-col items-end gap-2 shrink-0;
-}
-.cart-qty {
-  @apply flex items-center gap-1 border border-gray-200 rounded-full px-1;
-}
-.cart-qty button {
-  @apply w-7 h-7 flex items-center justify-center text-base font-bold text-black;
-}
-.cart-qty span {
-  @apply text-sm font-semibold w-5 text-center;
-}
-.cart-remove {
-  @apply text-xs text-gray-400 hover:text-black transition-colors;
-}
-.cart-footer {
-  @apply border-t border-black/5 px-5 sm:px-8 py-4 flex flex-col gap-2;
-}
-.cart-total {
-  @apply flex items-center justify-between text-lg font-black text-black max-w-2xl w-full mx-auto;
-}
-.cart-ship {
-  @apply text-xs text-gray-400 max-w-2xl w-full mx-auto;
-}
-.cart-checkout {
-  @apply w-full max-w-2xl mx-auto mt-1 py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2;
-}
-
-/* order confirmation */
-.cart-done {
-  @apply flex flex-col items-center justify-center gap-4 h-full text-center max-w-md mx-auto px-2;
-}
-.cart-done-check {
-  @apply w-16 h-16 flex items-center justify-center rounded-full bg-green-500 text-white text-3xl;
-}
-.cart-done-title {
-  @apply text-2xl font-black text-black;
-}
-.cart-done-text {
-  @apply text-gray-500 leading-relaxed;
-}
-
-/* ===== Mobile menu (fullscreen sheet — nothing shows behind it) ===== */
-.mobile-menu {
-  @apply fixed inset-0 z-[60] flex flex-col p-6;
-  background: rgba(246, 244, 239, 0.96);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-}
-.mm-head {
-  @apply flex items-center justify-between mb-6;
-}
-.mm-close {
-  @apply w-10 h-10 flex items-center justify-center rounded-full text-black text-lg bg-white/70 border border-black/5 shadow-sm;
-}
-.mm-links {
-  @apply flex flex-col flex-1 mt-2;
-}
-.mm-links li {
-  @apply flex items-baseline gap-3 py-4 text-3xl font-black tracking-tight text-black border-b border-black/10 cursor-pointer;
-}
-.mm-links li span {
-  @apply text-[10px] font-bold text-gray-400;
-  letter-spacing: 0.2em;
-}
-.mm-cart {
-  @apply flex items-center justify-center gap-2 w-full py-3.5 mt-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors;
-}
-
-/* ===== Toast (added to cart) ===== */
-.toast {
-  @apply fixed inset-x-0 bottom-5 z-[60] flex justify-center px-4 pointer-events-none;
-}
-.toast-card {
-  @apply pointer-events-auto flex items-center gap-3 text-white rounded-2xl px-4 py-3 shadow-2xl max-w-md w-full;
-  background: #1c1c1c;
-}
-.toast-check {
-  @apply w-7 h-7 flex items-center justify-center rounded-full text-white text-sm shrink-0;
-  background: #16a34a;
-}
-.toast-text {
-  @apply flex flex-col flex-1 min-w-0;
-}
-.toast-title {
-  @apply text-xs text-gray-300;
-}
-.toast-name {
-  @apply text-sm font-bold truncate;
-}
-.toast-link {
-  @apply text-sm font-bold underline shrink-0;
-}
-.toast-close {
-  @apply text-gray-400 hover:text-white shrink-0 text-sm;
-}
-
-/* ===== Design position pad — the draggable "matrix" (editor) ===== */
+/* matriz de posición del estampado: izquierda = frente, derecha = espalda */
 .cz-padwrap {
-  @apply mt-4 pt-3 border-t border-black/5;
+  @apply mt-4 pt-3;
+  border-top: 1px solid var(--line);
 }
 .cz-adjust-title {
-  @apply text-xs font-bold text-black mb-2;
+  @apply text-[11px] font-bold uppercase mb-2;
+  letter-spacing: 0.16em;
+  color: var(--muted);
 }
-/* compact matrix: left half = FRONT, right half = BACK */
 .cz-pad {
-  @apply relative w-full rounded-xl border border-black/10 cursor-crosshair select-none overflow-hidden;
+  @apply relative w-full rounded-xl cursor-crosshair select-none overflow-hidden;
   height: 8rem;
   touch-action: none;
-  background-color: rgba(255, 255, 255, 0.35);
+  /* gris medio: se ven tanto los estampados claros como los oscuros */
+  background-color: #7b7b80;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 1.6rem 1.6rem;
   background-position: center;
 }
 .cz-pad-cross-h {
-  @apply absolute bg-black/10 pointer-events-none;
+  @apply absolute pointer-events-none;
   left: 0; right: 0; top: 50%; height: 1px;
+  background: rgba(255, 255, 255, 0.2);
 }
 .cz-pad-divider {
-  @apply absolute pointer-events-none bg-black/20;
+  @apply absolute pointer-events-none;
   top: 0; bottom: 0; left: 50%; width: 1px;
+  background: rgba(255, 255, 255, 0.4);
 }
 .cz-pad-tag {
-  @apply absolute top-1.5 -translate-x-1/2 text-[9px] font-bold uppercase text-gray-400 pointer-events-none;
+  @apply absolute top-1.5 -translate-x-1/2 text-[9px] font-bold uppercase text-white/80 pointer-events-none;
   letter-spacing: 0.18em;
 }
 .cz-pad-empty {
-  @apply absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-medium text-gray-400 pointer-events-none;
+  @apply absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-medium text-white/70 pointer-events-none;
 }
 .cz-pad-hintside {
-  @apply text-xs text-gray-400;
+  @apply text-xs;
+  color: var(--dim);
 }
-/* the uploaded design is the drag handle inside the matrix */
 .cz-pad-img {
   @apply absolute object-contain pointer-events-none drop-shadow-md;
   transform: translate(-50%, -50%);
@@ -919,121 +1003,226 @@ input[type="file"] {
   @apply flex items-center justify-between gap-3 mt-3;
 }
 .cz-pad-label {
-  @apply text-xs font-semibold text-gray-600;
+  @apply text-xs font-semibold;
+  color: var(--muted);
 }
 .cz-stepper {
-  @apply flex items-center gap-1 border border-gray-200 rounded-full px-1.5 py-0.5;
+  @apply flex items-center gap-1 rounded-full px-1.5 py-0.5;
+  border: 1px solid var(--line-strong);
 }
 .cz-stepper button {
-  @apply w-7 h-7 flex items-center justify-center rounded-full text-base font-bold text-black hover:bg-black/5;
+  @apply w-7 h-7 flex items-center justify-center rounded-full text-base font-bold hover:bg-white/10;
+  color: var(--text);
 }
 .cz-stepper span {
   @apply text-xs font-semibold w-10 text-center;
 }
 .cz-pad-reset {
-  @apply text-xs font-semibold text-gray-400 hover:text-black transition-colors;
+  @apply text-xs font-semibold transition-colors;
+  color: var(--muted);
+}
+.cz-pad-reset:hover {
+  color: var(--text);
 }
 
 /* =====================================================================
-   SAU — marca, fotos de producto, WhatsApp y redes
+   Carrito
    ===================================================================== */
-.design-tee.has-photo {
-  @apply p-0 h-auto aspect-square overflow-hidden bg-[#d9d6cf];
+.cart {
+  @apply fixed inset-0 z-50 flex flex-col;
+  background: rgba(10, 10, 11, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
-.design-photo {
-  @apply w-full h-full object-cover transition-transform duration-500;
+.cart-top {
+  @apply flex items-center justify-between px-5 sm:px-8 py-4;
+  border-bottom: 1px solid var(--line);
 }
-.design-card:hover .design-photo {
-  transform: scale(1.04);
+.cart-top .cz-back {
+  @apply flex items-center gap-2 text-sm font-semibold;
 }
-
-.coll-card.has-photo,
-.page-coll-card.has-photo {
-  @apply relative overflow-hidden;
+.cart-title {
+  @apply text-xs font-bold uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text);
 }
-.coll-photo {
-  @apply absolute inset-0 w-full h-full object-cover;
+.cart-body {
+  @apply flex-1 overflow-y-auto px-5 sm:px-8 py-5;
 }
-.has-photo::after {
-  content: "";
-  @apply absolute inset-0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.05) 65%);
+.cart-empty {
+  @apply flex flex-col items-center justify-center gap-5 h-full text-center;
 }
-.has-photo > span {
-  @apply relative z-[1] text-white;
+.cart-empty-text {
+  color: var(--muted);
 }
-.design-tee.has-photo::after {
-  display: none;
+.cart-list {
+  @apply flex flex-col gap-3 max-w-2xl mx-auto;
 }
-
-/* filtro por colección en la página de Diseños */
-.coll-filter {
-  @apply flex gap-2 overflow-x-auto pt-4 pb-1 px-6 sm:px-10 xl:px-20;
-  scrollbar-width: none;
+.cart-item {
+  @apply flex items-center gap-4 p-3 rounded-2xl;
+  background: var(--surface);
+  border: 1px solid var(--line);
 }
-.coll-filter::-webkit-scrollbar {
-  display: none;
-}
-.coll-filter button {
-  @apply shrink-0 px-4 py-2 rounded-full border border-black/20 text-xs font-semibold text-gray-700 transition-colors;
-}
-.coll-filter button.active,
-.coll-filter button:hover {
-  @apply bg-black text-white border-black;
-}
-
-/* botón flotante de WhatsApp */
-.wa-fab {
-  @apply fixed z-50 flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transition-transform hover:scale-105;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  background: #25d366;
-}
-
-/* redes */
-.social-links {
-  @apply flex items-center gap-3;
-}
-.social-links a {
-  @apply flex items-center justify-center w-10 h-10 rounded-full border transition-colors;
-}
-
-/* footer de marca */
-.footer-logo {
-  @apply h-14 w-auto mb-2;
-}
-.footer-brand {
-  letter-spacing: 0.5em;
-}
-.footer-tag {
-  @apply text-xs text-gray-400;
-}
-.footer-social {
-  @apply my-3;
-}
-.footer-social a {
-  @apply border-white/20 text-white hover:bg-white hover:text-black;
-}
-.footer-contact,
-.footer-handle {
-  @apply text-sm font-semibold text-white/90 hover:text-white;
-}
-.site-footer {
-  @apply pb-24;
-}
-
-/* menú móvil: redes + contacto */
-.mm-contact {
-  @apply flex flex-col items-center gap-2 mt-6 text-xs text-gray-500;
-}
-.mm-contact .social-links a {
-  @apply border-black/20 text-black hover:bg-black hover:text-white;
-}
-
-/* carrito: miniatura de foto + enlace de respaldo a WhatsApp */
+.cart-swatch,
 .cart-thumb {
-  @apply w-14 h-14 rounded-xl object-cover shrink-0 border border-black/10;
+  @apply w-16 h-16 rounded-xl shrink-0 object-cover;
+  border: 1px solid var(--line-strong);
+}
+.cart-item-info {
+  @apply flex flex-col flex-1 min-w-0;
+}
+.cart-item-name {
+  @apply text-sm font-bold truncate;
+  color: var(--text);
+}
+.cart-item-meta {
+  @apply text-xs;
+  color: var(--muted);
+}
+.cart-item-price {
+  @apply text-sm font-semibold mt-1;
+  color: var(--text);
+}
+.cart-item-actions {
+  @apply flex flex-col items-end gap-2 shrink-0;
+}
+.cart-qty {
+  @apply flex items-center gap-1 rounded-full px-1;
+  border: 1px solid var(--line-strong);
+}
+.cart-qty button {
+  @apply w-7 h-7 flex items-center justify-center text-base font-bold;
+  color: var(--text);
+}
+.cart-qty span {
+  @apply text-sm font-semibold w-5 text-center;
+}
+.cart-remove {
+  @apply text-xs transition-colors;
+  color: var(--dim);
+}
+.cart-remove:hover {
+  color: var(--text);
+}
+.cart-footer {
+  @apply px-5 sm:px-8 py-4 flex flex-col gap-2;
+  border-top: 1px solid var(--line);
+}
+.cart-total {
+  @apply flex items-center justify-between text-lg font-black max-w-2xl w-full mx-auto;
+  color: var(--text);
+}
+.cart-ship {
+  @apply text-xs max-w-2xl w-full mx-auto;
+  color: var(--muted);
+}
+.cart-checkout {
+  @apply w-full max-w-2xl mx-auto mt-1 py-4 rounded-full text-sm font-bold uppercase flex items-center justify-center gap-2 transition-opacity hover:opacity-90;
+  letter-spacing: 0.06em;
+  background: var(--wa);
+  color: #04210f;
+}
+.cart-done {
+  @apply flex flex-col items-center justify-center gap-4 h-full text-center max-w-md mx-auto px-2;
+}
+.cart-done-check {
+  @apply w-16 h-16 flex items-center justify-center rounded-full text-3xl;
+  background: var(--accent);
+  color: #000;
+}
+.cart-done-title {
+  font-size: 3rem;
+  color: var(--text);
+}
+.cart-done-text {
+  @apply leading-relaxed;
+  color: var(--muted);
+}
+.cart-done-text strong {
+  color: var(--text);
 }
 .cart-wa-again {
-  @apply text-xs font-semibold underline text-gray-600 mb-2;
+  @apply text-xs font-semibold underline mb-2;
+  color: var(--muted);
+}
+
+/* =====================================================================
+   Menú móvil (pantalla completa)
+   ===================================================================== */
+.mobile-menu {
+  @apply fixed inset-0 z-[60] flex flex-col p-6;
+  background: rgba(10, 10, 11, 0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+.mm-head {
+  @apply flex items-center justify-between mb-6;
+}
+.mm-close {
+  @apply w-10 h-10 flex items-center justify-center rounded-full text-lg;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+.mm-links {
+  @apply flex flex-col flex-1 mt-2;
+}
+.mm-links li {
+  @apply flex items-baseline gap-4 py-4 cursor-pointer transition-colors;
+  font-size: 3.25rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+}
+.mm-links li:hover {
+  color: var(--accent);
+}
+.mm-links li span {
+  @apply text-[10px] font-bold;
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+.mm-contact {
+  @apply flex flex-col items-center gap-3 mt-6 text-xs;
+  color: var(--muted);
+}
+.mm-cart {
+  @apply flex items-center justify-center gap-2 w-full py-4 mt-5 rounded-full text-sm font-bold uppercase transition-colors;
+  letter-spacing: 0.06em;
+  background: var(--text);
+  color: #000;
+}
+
+/* =====================================================================
+   Aviso "agregado al carrito"
+   ===================================================================== */
+.toast {
+  @apply fixed inset-x-0 bottom-5 z-[60] flex justify-center px-4 pointer-events-none;
+}
+.toast-card {
+  @apply pointer-events-auto flex items-center gap-3 rounded-2xl px-4 py-3 max-w-md w-full;
+  background: var(--text);
+  color: #000;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+}
+.toast-check {
+  @apply w-7 h-7 flex items-center justify-center rounded-full text-sm shrink-0;
+  background: #0a0a0b;
+  color: var(--accent);
+}
+.toast-text {
+  @apply flex flex-col flex-1 min-w-0;
+}
+.toast-title {
+  @apply text-xs;
+  color: #55555a;
+}
+.toast-name {
+  @apply text-sm font-bold truncate;
+}
+.toast-link {
+  @apply text-sm font-bold underline shrink-0;
+}
+.toast-close {
+  @apply shrink-0 text-sm;
+  color: #55555a;
 }

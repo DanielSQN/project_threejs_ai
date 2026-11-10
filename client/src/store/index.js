@@ -20,7 +20,7 @@ const state = proxy({
   isFullTexture: false,
   isLogoBack: false,
   logoDecal: './brand-logo.png',
-  fullDecal: './threejs.png',
+  fullDecal: './sau-mark.png',
   logoDecalBack: './sau-mark.png',
   // front print transform
   logoScale: 1,

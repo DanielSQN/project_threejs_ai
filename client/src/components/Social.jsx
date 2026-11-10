@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaWhatsapp, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 import { BRAND, whatsappLink } from '../config/brand';
@@ -20,19 +20,32 @@ export const SocialLinks = ({ size = 18, className = '' }) => (
   </div>
 );
 
-// botón flotante de WhatsApp
-export const WhatsAppFab = () => (
-  <a
-    className="wa-fab"
-    href={whatsappLink('¡Hola SAU! Quiero información sobre sus camisetas.')}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={`Escríbenos por WhatsApp al ${BRAND.whatsappDisplay}`}
-    title="Escríbenos por WhatsApp"
-  >
-    <FaWhatsapp size={28} />
-  </a>
-);
+// Botón flotante de WhatsApp. Con `afterScroll` (portada) aparece solo al
+// bajar, para no tapar los botones del hero.
+export const WhatsAppFab = ({ afterScroll = false }) => {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    if (!afterScroll) return undefined;
+    const onScroll = () => setScrolled(window.scrollY > 200);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [afterScroll]);
+
+  if (afterScroll && !scrolled) return null;
+  return (
+    <a
+      className="wa-fab"
+      href={whatsappLink('¡Hola SAU! Quiero información sobre sus camisetas.')}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Escríbenos por WhatsApp al ${BRAND.whatsappDisplay}`}
+      title="Escríbenos por WhatsApp"
+    >
+      <FaWhatsapp size={28} />
+    </a>
+  );
+};
 
 export const SiteFooter = () => (
   <footer className="site-footer">

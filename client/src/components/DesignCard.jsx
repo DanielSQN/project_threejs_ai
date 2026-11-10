@@ -22,24 +22,28 @@ export const openEditor = (d = {}) => {
 // hay, si no la silueta de la prenda en su color.
 const DesignCard = ({ d }) => (
   <div className="design-card">
-    <div className={`design-tee ${d.image ? 'has-photo' : ''}`} onClick={() => openEditor(d)}>
+    <div className="design-tee" onClick={() => openEditor(d)}>
       {d.image
         ? <img src={d.image} alt={d.name} loading="lazy" className="design-photo" />
         : <Tee color={d.color} variant={d.variant} />}
+      <span className="design-hover" aria-hidden>Personalizar en 3D →</span>
     </div>
     <div className="design-info">
       <span className="design-name">{d.name}</span>
       <span className="design-verse">{d.verse}</span>
-      <span className="design-price">{formatPrice(d.price)}</span>
-      <div className="design-actions">
-        <button className="design-personalize" onClick={() => openEditor(d)}>Personalizar</button>
-        <button
-          className="design-add"
-          onClick={(e) => { e.stopPropagation(); addToCart({ name: d.name, price: d.price, color: d.color, image: d.image, size: 'M', qty: 1 }); }}
-          aria-label="Agregar al carrito"
-        >
-          <BagPlusIcon />
-        </button>
+      <div className="design-row">
+        <span className="design-price">{formatPrice(d.price)}</span>
+        <div className="design-actions">
+          <button className="design-personalize" onClick={() => openEditor(d)}>Personalizar</button>
+          <button
+            className="design-add"
+            onClick={(e) => { e.stopPropagation(); addToCart({ name: d.name, price: d.price, color: d.color, image: d.image, size: 'M', qty: 1 }); }}
+            aria-label={`Agregar ${d.name} al carrito`}
+            title="Agregar al carrito"
+          >
+            <BagPlusIcon />
+          </button>
+        </div>
       </div>
     </div>
   </div>

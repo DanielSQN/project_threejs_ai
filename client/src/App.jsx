@@ -1,4 +1,5 @@
 import { useSnapshot } from 'valtio';
+import { MotionConfig } from 'framer-motion';
 
 import Customizer from './pages/Customizer';
 import Home from './pages/Home';
@@ -19,12 +20,14 @@ function App() {
   else view = <SectionPage />;
 
   return (
-    <main className="app transition-all ease-in">
+    <MotionConfig reducedMotion="user">
+    <main className="app">
       {view}
       {snap.cartOpen && <Cart />}
       <Toast />
-      {snap.intro && !snap.cartOpen && <WhatsAppFab />}
+      {snap.intro && !snap.cartOpen && <WhatsAppFab afterScroll={snap.page === 'home'} />}
     </main>
+    </MotionConfig>
   );
 }
 
