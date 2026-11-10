@@ -800,7 +800,7 @@ input[type="file"] {
   @apply text-xs text-gray-400 max-w-2xl w-full mx-auto;
 }
 .cart-checkout {
-  @apply w-full max-w-2xl mx-auto mt-1 py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors;
+  @apply w-full max-w-2xl mx-auto mt-1 py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2;
 }
 
 /* order confirmation */
@@ -932,4 +932,108 @@ input[type="file"] {
 }
 .cz-pad-reset {
   @apply text-xs font-semibold text-gray-400 hover:text-black transition-colors;
+}
+
+/* =====================================================================
+   SAU — marca, fotos de producto, WhatsApp y redes
+   ===================================================================== */
+.design-tee.has-photo {
+  @apply p-0 h-auto aspect-square overflow-hidden bg-[#d9d6cf];
+}
+.design-photo {
+  @apply w-full h-full object-cover transition-transform duration-500;
+}
+.design-card:hover .design-photo {
+  transform: scale(1.04);
+}
+
+.coll-card.has-photo,
+.page-coll-card.has-photo {
+  @apply relative overflow-hidden;
+}
+.coll-photo {
+  @apply absolute inset-0 w-full h-full object-cover;
+}
+.has-photo::after {
+  content: "";
+  @apply absolute inset-0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.05) 65%);
+}
+.has-photo > span {
+  @apply relative z-[1] text-white;
+}
+.design-tee.has-photo::after {
+  display: none;
+}
+
+/* filtro por colección en la página de Diseños */
+.coll-filter {
+  @apply flex gap-2 overflow-x-auto pt-4 pb-1 px-6 sm:px-10 xl:px-20;
+  scrollbar-width: none;
+}
+.coll-filter::-webkit-scrollbar {
+  display: none;
+}
+.coll-filter button {
+  @apply shrink-0 px-4 py-2 rounded-full border border-black/20 text-xs font-semibold text-gray-700 transition-colors;
+}
+.coll-filter button.active,
+.coll-filter button:hover {
+  @apply bg-black text-white border-black;
+}
+
+/* botón flotante de WhatsApp */
+.wa-fab {
+  @apply fixed z-50 flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transition-transform hover:scale-105;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  background: #25d366;
+}
+
+/* redes */
+.social-links {
+  @apply flex items-center gap-3;
+}
+.social-links a {
+  @apply flex items-center justify-center w-10 h-10 rounded-full border transition-colors;
+}
+
+/* footer de marca */
+.footer-logo {
+  @apply h-14 w-auto mb-2;
+}
+.footer-brand {
+  letter-spacing: 0.5em;
+}
+.footer-tag {
+  @apply text-xs text-gray-400;
+}
+.footer-social {
+  @apply my-3;
+}
+.footer-social a {
+  @apply border-white/20 text-white hover:bg-white hover:text-black;
+}
+.footer-contact,
+.footer-handle {
+  @apply text-sm font-semibold text-white/90 hover:text-white;
+}
+.site-footer {
+  @apply pb-24;
+}
+
+/* menú móvil: redes + contacto */
+.mm-contact {
+  @apply flex flex-col items-center gap-2 mt-6 text-xs text-gray-500;
+}
+.mm-contact .social-links a {
+  @apply border-black/20 text-black hover:bg-black hover:text-white;
+}
+
+/* carrito: miniatura de foto + enlace de respaldo a WhatsApp */
+.cart-thumb {
+  @apply w-14 h-14 rounded-xl object-cover shrink-0 border border-black/10;
+}
+.cart-wa-again {
+  @apply text-xs font-semibold underline text-gray-600 mb-2;
 }

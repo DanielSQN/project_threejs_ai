@@ -3,6 +3,8 @@ import { useSnapshot } from 'valtio';
 import { IoIosMan, IoIosWoman } from 'react-icons/io';
 
 import state, { cartCount, goPage } from '../store';
+import { BRAND } from '../config/brand';
+import { SocialLinks } from './Social';
 
 const links = [
   { label: 'Diseños', page: 'disenos' },
@@ -61,7 +63,7 @@ const Navbar = () => {
         {/* left: menu (mobile) / logo + links (desktop) */}
         <div className="nav-side">
           <button aria-label="Menú" className="nav-icon-btn lg:hidden" onClick={() => setMenuOpen(true)}><IconMenu /></button>
-          <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img hidden lg:block" onClick={() => goPage('home')} />
+          <img src={BRAND.logo} alt={BRAND.name} className="nav-logo-img hidden lg:block" onClick={() => goPage('home')} />
           <ul className="nav-links">
             {links.map((l) => (
               <li key={l.label} className={snap.page === l.page ? 'active' : ''} onClick={() => goPage(l.page)}>{l.label}</li>
@@ -70,7 +72,7 @@ const Navbar = () => {
         </div>
 
         {/* mobile: brand centered */}
-        <img src="./brand-icon.png" alt="Viste tu fe" className="nav-logo-img nav-logo-center lg:hidden" onClick={() => goPage('home')} />
+        <img src={BRAND.logo} alt={BRAND.name} className="nav-logo-img nav-logo-center lg:hidden" onClick={() => goPage('home')} />
 
         {/* desktop: gender centered */}
         <div className="nav-gender hidden lg:block"><GenderSeg gender={snap.gender} /></div>
@@ -88,7 +90,7 @@ const Navbar = () => {
       {menuOpen && (
         <div className="mobile-menu">
           <div className="mm-head">
-            <img src="./brand-icon.png" alt="Viste tu fe" className="h-9 w-auto object-contain" />
+            <img src={BRAND.logo} alt={BRAND.name} className="h-9 w-auto object-contain" />
             <button className="mm-close" onClick={() => setMenuOpen(false)} aria-label="Cerrar">✕</button>
           </div>
 
@@ -99,6 +101,11 @@ const Navbar = () => {
             <li onClick={() => go('disenos')}><span>02</span> Diseños</li>
             <li onClick={() => go('colecciones')}><span>03</span> Colecciones</li>
           </ul>
+
+          <div className="mm-contact">
+            <SocialLinks size={22} />
+            <span>{BRAND.handle} · WhatsApp {BRAND.whatsappDisplay}</span>
+          </div>
 
           <button className="mm-cart" onClick={() => { state.cartOpen = true; setMenuOpen(false); }}>
             <IconBag /> Ver carrito{count > 0 ? ` (${count})` : ''}

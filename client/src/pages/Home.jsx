@@ -13,14 +13,14 @@ import Sections from '../components/Sections';
 const CATALOG = {
   hombre: [
     { color: '#1c1c1c', logo: './brand-logo.png', name: 'La Visión' },
-    { color: '#2B3A55', logo: './threejs.png', name: 'Fe Inquebrantable' },
-    { color: '#6E7B6B', logo: './react.png', name: 'Provisión' },
+    { color: '#2B3A55', logo: './sau-mark.png', name: 'SAU' },
+    { color: '#6E7B6B', logo: './brand-logo.png', name: 'Provisión' },
     { color: '#D8CFBE', logo: './brand-logo.png', name: 'Esperanza' },
   ],
   mujer: [
     { color: '#2B3A55', logo: './brand-logo.png', name: 'Gracia' },
-    { color: '#A98B6A', logo: './threejs.png', name: 'Luz del Mundo' },
-    { color: '#F3F1EA', logo: './react.png', name: 'Fe' },
+    { color: '#CFC8E6', logo: './sau-mark.png', name: 'SAU' },
+    { color: '#A98B6A', logo: './brand-logo.png', name: 'Luz del Mundo' },
   ],
 };
 
@@ -80,7 +80,7 @@ const Home = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            Si Dios te dio la visión
+            SAU · Camisetas personalizadas
           </motion.p>
           <motion.h1
             className="head-text"
