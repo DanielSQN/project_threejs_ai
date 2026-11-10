@@ -3,15 +3,22 @@ import { proxy } from 'valtio';
 // Map a URL path to the app screen, so deep links (/disenos, /personalizar,
 // /carrito…) open directly on that screen. Used for the initial load and by
 // the history-sync hook on Back/Forward.
-export const fromPath = (path) => {
+export const fromPath = (path, search = '') => {
   const p = ('/' + (path || '').replace(/^\/+|\/+$/g, '')).toLowerCase();
+  const page = p === '/disenos' ? 'disenos' : p === '/colecciones' ? 'colecciones' : 'home';
   return {
     intro: p !== '/personalizar',
-    page: p === '/disenos' ? 'disenos' : p === '/colecciones' ? 'colecciones' : 'home',
+    page,
+    collection: page === 'disenos' ? new URLSearchParams(search).get('c') : null,
     cartOpen: p === '/carrito',
   };
 };
-const nav0 = fromPath(typeof window !== 'undefined' ? window.location.pathname : '/');
+const loc = typeof window !== 'undefined' ? window.location : { pathname: '/', search: '' };
+const nav0 = fromPath(loc.pathname, loc.search);
+
+// Non-reactive hint for the history hook: the next navigation is a "volver",
+// so the screen we return to keeps its scroll position.
+export const navIntent = { back: false };
 
 const state = proxy({
   intro: nav0.intro,
@@ -19,7 +26,7 @@ const state = proxy({
   isLogoTexture: true,
   isFullTexture: false,
   isLogoBack: false,
-  logoDecal: './brand-logo.png',
+  logoDecal: './sau-mark.png',
   fullDecal: './sau-mark.png',
   logoDecalBack: './sau-mark.png',
   // front print transform
@@ -33,7 +40,7 @@ const state = proxy({
   // home hero
   gender: 'hombre', // 'hombre' | 'mujer' -> drives the hero catalog (shared w/ nav)
   page: nav0.page, // 'home' | 'disenos' | 'colecciones' -> simple section routing
-  collection: null, // id de colección que filtra la página de Diseños (null = todas)
+  collection: nav0.collection, // id de colección que filtra la página de Diseños (null = todas)
   breezeTick: 0, // bump to trigger a wind "gust" on the shirt
   // customizer
   activeView: 'front', // 'front' | 'back' -> derived from / drives shirtRotY
@@ -53,18 +60,29 @@ export const cartCount = (cart = state.cart) => cart.reduce((sum, i) => sum + i.
 export const formatPrice = (n) => '$' + Number(n).toLocaleString('es-CO');
 
 // simple section "routing" -------------------------------------------------
+// (the history hook decides the scroll: new screens start at the top)
 export const goPage = (page) => {
-  if (page !== 'disenos') state.collection = null;
+  // already on that screen (e.g. tapping the logo on the home): just go up
+  if (state.intro && !state.cartOpen && state.page === page && !state.collection) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
   state.intro = true;
   state.cartOpen = false;
+  state.collection = null;
   state.page = page;
-  window.scrollTo({ top: 0, behavior: 'auto' });
 };
 
 // abrir la página de Diseños filtrada por una colección
 export const goCollection = (id) => {
   goPage('disenos');
   state.collection = id;
+};
+
+// "← Volver" de una página interna: regresa al inicio conservando dónde estabas
+export const goBackHome = () => {
+  navIntent.back = true;
+  goPage('home');
 };
 
 // jump to the home and scroll to one of its anchored sections (e.g. beneficios)

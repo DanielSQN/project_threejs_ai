@@ -7,19 +7,18 @@ import Canvas from '../canvas';
 import Navbar, { GenderSeg } from '../components/Navbar';
 import Sections from '../components/Sections';
 
-// Each design keeps the same base shirt but changes color + front print.
-// Lead each catalog with a high-contrast design so the hero shirt reads clearly
-// against the beige background (a beige shirt would blend in).
+// The hero shirt only cycles its colour; the print is always the SAU logo
+// (white mark on dark garments).
 const CATALOG = {
   hombre: [
     { color: '#F5F5F3', logo: './sau-mark.png', name: 'SAU blanca' },
     { color: '#1c1c1c', logo: './sau-mark-white.png', name: 'SAU negra' },
-    { color: '#EFE6D2', logo: './brand-logo.png', name: 'La Visión' },
+    { color: '#EFE6D2', logo: './sau-mark.png', name: 'SAU crema' },
     { color: '#7cc4bd', logo: './sau-mark.png', name: 'SAU verde' },
   ],
   mujer: [
     { color: '#CFC8E6', logo: './sau-mark.png', name: 'SAU lila' },
-    { color: '#F5F5F3', logo: './brand-logo.png', name: 'La Visión' },
+    { color: '#F5F5F3', logo: './sau-mark.png', name: 'SAU blanca' },
     { color: '#1c1c1c', logo: './sau-mark-white.png', name: 'SAU negra' },
   ],
 };
