@@ -8,7 +8,7 @@ import state from '../store';
 
 // Warm the cache for every print the hero cycles through, so swapping the
 // design is instant and the shirt never blanks out while a texture loads.
-['./brand-logo.png', './threejs.png', './react.png'].forEach((src) => useTexture.preload(src));
+['./brand-logo.png', './sau-mark.png', './sau-mark-white.png'].forEach((src) => useTexture.preload(src));
 
 const Shirt = () => {
   const snap = useSnapshot(state);

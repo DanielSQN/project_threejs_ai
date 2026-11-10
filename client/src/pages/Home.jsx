@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSnapshot } from 'valtio';
 
-import state from '../store';
+import state, { goPage } from '../store';
 import Canvas from '../canvas';
 import Navbar, { GenderSeg } from '../components/Navbar';
 import Sections from '../components/Sections';
@@ -12,15 +12,15 @@ import Sections from '../components/Sections';
 // against the beige background (a beige shirt would blend in).
 const CATALOG = {
   hombre: [
-    { color: '#1c1c1c', logo: './brand-logo.png', name: 'La Visión' },
-    { color: '#2B3A55', logo: './threejs.png', name: 'Fe Inquebrantable' },
-    { color: '#6E7B6B', logo: './react.png', name: 'Provisión' },
-    { color: '#D8CFBE', logo: './brand-logo.png', name: 'Esperanza' },
+    { color: '#F5F5F3', logo: './sau-mark.png', name: 'SAU blanca' },
+    { color: '#1c1c1c', logo: './sau-mark-white.png', name: 'SAU negra' },
+    { color: '#EFE6D2', logo: './brand-logo.png', name: 'La Visión' },
+    { color: '#7cc4bd', logo: './sau-mark.png', name: 'SAU verde' },
   ],
   mujer: [
-    { color: '#2B3A55', logo: './brand-logo.png', name: 'Gracia' },
-    { color: '#A98B6A', logo: './threejs.png', name: 'Luz del Mundo' },
-    { color: '#F3F1EA', logo: './react.png', name: 'Fe' },
+    { color: '#CFC8E6', logo: './sau-mark.png', name: 'SAU lila' },
+    { color: '#F5F5F3', logo: './brand-logo.png', name: 'La Visión' },
+    { color: '#1c1c1c', logo: './sau-mark-white.png', name: 'SAU negra' },
   ],
 };
 
@@ -64,40 +64,34 @@ const Home = () => {
       <Navbar />
 
       <div className="hero-screen">
+        <span className="hero-bgword" aria-hidden>SAU</span>
+
         <div className="hero">
-          {/* on mobile the gender selector lives in the hero (navbar stays clean) */}
-          <motion.div
-            className="hero-gender lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <GenderSeg gender={gender} />
-          </motion.div>
-          <motion.p
-            className="hero-eyebrow"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            Si Dios te dio la visión
-          </motion.p>
-          <motion.h1
-            className="head-text"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          >
-            VISTE TU <em>fe.</em>
-          </motion.h1>
-          <motion.p
-            className="hero-subtitle"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.06, ease: 'easeOut' }}
-          >
-            Diseños que hablan de lo que crees.
-          </motion.p>
+          <div className="hero-copy">
+            {/* on mobile the gender selector lives in the hero (navbar stays clean) */}
+            <motion.div className="hero-gender lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+              <GenderSeg gender={gender} />
+            </motion.div>
+            <motion.p className="hero-eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+              SAU · Camisetas personalizadas
+            </motion.p>
+            <motion.h1
+              className="head-text"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Viste <br className="hidden lg:block" />tu <em>fe.</em>
+            </motion.h1>
+            <motion.p
+              className="hero-subtitle"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.12, ease: 'easeOut' }}
+            >
+              Diseños que hablan de lo que crees. Elige uno del catálogo o crea el tuyo en 3D.
+            </motion.p>
+          </div>
 
           <div className="hero-stage">
             <div className="hero-canvasbox">
@@ -105,19 +99,21 @@ const Home = () => {
             </div>
           </div>
 
-          <button className="btn-beige" onClick={() => (state.intro = false)}>
-            Personalizar ahora <span aria-hidden>→</span>
-          </button>
+          <motion.div className="hero-cta" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }}>
+            <button className="btn-primary" onClick={() => (state.intro = false)}>
+              Personalizar <span aria-hidden>→</span>
+            </button>
+            <button className="btn-ghost" onClick={() => goPage('disenos')}>Ver catálogo</button>
+          </motion.div>
         </div>
 
         {/* mobile-only "scroll for more" hint */}
         <button
           className="hero-scroll-hint lg:hidden"
-          onClick={() => document.getElementById('estilo')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('disenos')?.scrollIntoView({ behavior: 'smooth' })}
           aria-label="Desliza para ver más"
         >
-          <span>Desliza para ver más</span>
-          <svg className="hero-scroll-chevron" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+          <svg className="hero-scroll-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
         </button>
       </div>
 

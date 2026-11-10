@@ -20,8 +20,8 @@ const state = proxy({
   isFullTexture: false,
   isLogoBack: false,
   logoDecal: './brand-logo.png',
-  fullDecal: './threejs.png',
-  logoDecalBack: './brand-logo.png',
+  fullDecal: './sau-mark.png',
+  logoDecalBack: './sau-mark.png',
   // front print transform
   logoScale: 1,
   logoOffsetX: 0,
@@ -33,6 +33,7 @@ const state = proxy({
   // home hero
   gender: 'hombre', // 'hombre' | 'mujer' -> drives the hero catalog (shared w/ nav)
   page: nav0.page, // 'home' | 'disenos' | 'colecciones' -> simple section routing
+  collection: null, // id de colección que filtra la página de Diseños (null = todas)
   breezeTick: 0, // bump to trigger a wind "gust" on the shirt
   // customizer
   activeView: 'front', // 'front' | 'back' -> derived from / drives shirtRotY
@@ -41,10 +42,10 @@ const state = proxy({
   size: 'M',
   quantity: 1,
   // cart
-  cart: [], // { id, key, name, price, color, size, qty }
+  cart: [], // { id, key, name, price, color, image, size, qty }
   cartOpen: nav0.cartOpen,
   toast: null, // last item name added (shows a confirmation)
-  order: null, // { count, total } once an order is placed -> confirmation screen
+  order: null, // { count, total, link } once an order is placed -> confirmation screen
 });
 
 export const cartCount = (cart = state.cart) => cart.reduce((sum, i) => sum + i.qty, 0);
@@ -53,10 +54,17 @@ export const formatPrice = (n) => '$' + Number(n).toLocaleString('es-CO');
 
 // simple section "routing" -------------------------------------------------
 export const goPage = (page) => {
+  if (page !== 'disenos') state.collection = null;
   state.intro = true;
   state.cartOpen = false;
   state.page = page;
   window.scrollTo({ top: 0, behavior: 'auto' });
+};
+
+// abrir la página de Diseños filtrada por una colección
+export const goCollection = (id) => {
+  goPage('disenos');
+  state.collection = id;
 };
 
 // jump to the home and scroll to one of its anchored sections (e.g. beneficios)
@@ -84,6 +92,7 @@ export const addToCart = (item) => {
       name: item.name,
       price: item.price,
       color: item.color,
+      image: item.image || null,
       size: item.size || 'M',
       qty,
     });
@@ -105,9 +114,9 @@ export const setCartQty = (id, qty) => {
 
 export const cartTotal = (cart = state.cart) => cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-export const checkout = () => {
+export const checkout = (link = null) => {
   if (state.cart.length === 0) return;
-  state.order = { count: cartCount(), total: cartTotal() };
+  state.order = { count: cartCount(), total: cartTotal(), link };
   state.cart = [];
 };
 
