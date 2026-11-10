@@ -1,7 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSnapshot } from 'valtio';
 
-import state, { goPage, goCollection } from '../store';
+import state, { goBackHome, goCollection } from '../store';
+import { canGoBack } from '../hooks/useHistorySync';
+
+// vuelve a la pantalla anterior (y a donde estabas en ella); si se entró
+// directo por enlace, va al inicio
+const back = () => (canGoBack() ? window.history.back() : goBackHome());
 import { FEATURED, COLLECTIONS } from '../data/products';
 import Navbar from '../components/Navbar';
 import DesignCard, { openEditor } from '../components/DesignCard';
@@ -13,7 +18,7 @@ const DesignsPage = ({ collection }) => {
   return (
     <>
       <div className="page-head">
-        <button className="page-back" onClick={() => goPage('home')}>← Inicio</button>
+        <button className="page-back" onClick={back}>← Volver</button>
         <h1 className="page-title">{coll ? coll.name : 'Diseños'}</h1>
         <p className="page-sub">{coll ? coll.desc : 'Fe, Colombia y mensajes que inspiran.'} Toca un diseño para personalizarlo en 3D.</p>
       </div>
@@ -33,7 +38,7 @@ const DesignsPage = ({ collection }) => {
 const CollectionsPage = () => (
   <>
     <div className="page-head">
-      <button className="page-back" onClick={() => goPage('home')}>← Inicio</button>
+      <button className="page-back" onClick={back}>← Volver</button>
       <h1 className="page-title">Colecciones</h1>
       <p className="page-sub">Explora por temas que hablan de lo que eres.</p>
     </div>
@@ -55,9 +60,6 @@ const TITLES = { disenos: 'Diseños', colecciones: 'Colecciones' };
 
 const SectionPage = () => {
   const snap = useSnapshot(state);
-
-  // each page starts at the top
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'auto' }); }, [snap.page, snap.collection]);
 
   return (
     <section className="section-page">
